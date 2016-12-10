@@ -1,8 +1,16 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  main.container
+    div.row
+      div.col-md-6
+        p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris molestie elit dui, id placerat mauris elementum nec. Cras mattis magna ac nunc tincidunt, vitae efficitur lectus efficitur. Aliquam sagittis gravida massa, eu semper odio volutpat ut. Sed blandit mi at purus porttitor aliquet. Fusce dictum massa eget vulputate molestie.
+      div.col-md-5.col-md-offset-1#chat
+        ul
+          li Hey
+          li What's up?
+          li Start a game
+          li kk
 
-  form(action='/game')
-    button.btn.btn-default Game Room
+    form(action='/game')
+      button.btn.btn-default Game Room
