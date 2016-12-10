@@ -344,13 +344,27 @@ function clearHighlights() {
 }
 
 $('#readOnlyButton').click(() => {
+    if (artpad.readOnly) {
+        toggleReadOnly(false)
+    } else {
+        toggleReadOnly(true)
+    }
+})
+
+function toggleReadOnly(readOnly) {
     artpad.history = []
     artpad.lastChange = []
+    payload = []
+    artpad.dirtyUndo = false
+    artpad.isHolding = false
+    artpad.mirror_isHolding = false
+    artpad.clearWasPressed = false
+    artpad.context.beginPath()
 
     if (artpad.readOnly) {
+        artpad.readOnly = false
         clearScreen()
         sendClearScreen()
-        artpad.readOnly = false
         $('#readOnlyh1').text("Read Only is OFF")
         $('#toolbar').css('visibility', 'visible')
         setBrush("black")
@@ -361,4 +375,4 @@ $('#readOnlyButton').click(() => {
         setBrush("black")
         $('#artpadCanvas').css('cursor', 'auto')
     }
-})
+}
