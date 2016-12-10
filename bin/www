@@ -19,7 +19,9 @@ app.set('port', port);
  * Create HTTP server.
  */
 
+const socketIO = require('socket.io');
 var server = http.createServer(app);
+const io = socketIO(server);
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -88,3 +90,15 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+//artpad socket.io functions
+io.on('connection', socket => {
+  console.log('connected')
+  socket.broadcast.emit('resync')
+  socket.on('disconnect', () => {
+    console.log('disconnected')
+  })
+  socket.on('mirror-payload', (msg) => {
+    socket.broadcast.emit('mirror-package', msg)
+  })
+})
