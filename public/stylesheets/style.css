@@ -38,3 +38,50 @@ canvas{
 .spacer{
   width:40px;
 }
+
+/* ADD STUFF*/
+#messages {
+ padding-left: 15px;
+}
+
+.messages {
+  min-height: 300px;
+}
+
+.message {
+  padding-top: 2px;
+  width: 100%;
+  background-color: #ddd;
+  border-radius: 3px;
+  margin-top: 2px;
+}
+
+.message:nth-child(odd) {
+  background-color: #fff;
+}
+
+.online {
+  size: 16px;
+  padding-top: 2px;
+  width: 100%;
+  background-color: #ddd;
+  border-radius: 3px;
+  margin-top: 2px;
+}
+
+.online:nth-child(odd) {
+  
+    background-color: #fff;
+}
+#submit {
+  width : 100%;
+}
+.well {
+  overflow-y: scroll;
+}
+
+
+.users {
+  min-height: 300px;
+  padding-left: 15px;
+}

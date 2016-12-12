@@ -10,4 +10,8 @@ router.get('/game', function(req, res, next) {
   res.render('game', { title: 'Sketchy' });
 });
 
+router.get('/chat', function(req, res, next) {
+  res.render('chat', { title: 'Chat Sample' });
+});
+
 module.exports = router;

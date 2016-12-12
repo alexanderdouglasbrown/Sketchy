@@ -1,0 +1,22 @@
+extends layout
+
+block content
+  h1 Basic Chat App
+  #messages
+    .row
+      .col-lg-5
+        .messages.well.well-sm
+      .col-lg-3
+        .users#playerlist.well.well-sm
+    .row
+      .col-lg-5
+        .input-group
+        form(action = " ")
+            .col-lg-9
+                input.form-control(type='text', placeholder='Message...', autocomplete = 'off')
+            .col-lg-3
+                span.input-group-btn
+                button#submit.btn.btn-default Send
+      button#lobbybutton.btn.btn-default Return to Lobby
+      
+  script(src='/javascripts/socket.js')

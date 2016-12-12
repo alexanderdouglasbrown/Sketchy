@@ -13,7 +13,7 @@ const artpad = {
     readOnly: true
 }
 
-const socket = io()
+const socket = io();
 let payload = []
 
 window.onload = () => {

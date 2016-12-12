@@ -19,17 +19,21 @@ app.set('port', port);
  * Create HTTP server.
  */
 
+//some temporary chat variables
+const LOBBY = 'lobby-chat';
+const PLAYERLIST = 'player-list';
+let playerList = [];
+
+
 const socketIO = require('socket.io');
 var server = http.createServer(app);
 const io = socketIO(server);
 
-/**
- * Listen on provided port, on all network interfaces.
- */
-
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+
+// socket functionality 
 
 /**
  * Normalize a port into a number, string, or false.
@@ -59,6 +63,7 @@ function onError(error) {
   if (error.syscall !== 'listen') {
     throw error;
   }
+  
 
   var bind = typeof port === 'string'
     ? 'Pipe ' + port
@@ -78,7 +83,6 @@ function onError(error) {
       throw error;
   }
 }
-
 /**
  * Event listener for HTTP server "listening" event.
  */
@@ -91,14 +95,55 @@ function onListening() {
   debug('Listening on ' + bind);
 }
 
-//artpad socket.io functions
 io.on('connection', socket => {
-  console.log('connected')
-  socket.broadcast.emit('resync')
-  socket.on('disconnect', () => {
-    console.log('disconnected')
-  })
-  socket.on('mirror-payload', (msg) => {
-    socket.broadcast.emit('mirror-package', msg)
-  })
-})
+    //before session 
+    let focus = LOBBY ;  
+    console.log( 'client connected id : '  + socket.id);
+    playerList.push(socket.id);
+  
+    socket.broadcast.emit('resync')
+    socket.join(LOBBY);
+    socket.join(socket.id);
+  
+    io.to(LOBBY).emit('playerList', socket.id);
+    
+    for( let inc = 0; inc < playerList.length ; inc++){
+      if (playerList[inc] != socket.id){
+        io.to(socket.id).emit('playerList', playerList[inc]);
+      }
+    }
+  //  }
+    socket.on( 'disconnect', data => {
+      console.log( 'client disconnected' );
+      let index = playerList.indexOf(socket.id);
+      io.emit('playerDelete' , socket.id);
+      playerList.splice(index, 1);
+      
+    }) 
+    
+    socket.on('chat message', msg =>{
+         console.log('message: ' + msg);
+      if (focus == LOBBY){
+         io.to(focus).emit('chat message', msg);
+      } else {
+          io.to(socket.id).emit('chat message', msg);
+          io.to(focus).emit('chat message', msg);
+      }
+    });
+  
+    socket.on ( 'private-chat', room =>  {
+      focus = room;
+      console.log(socket.id +' is joinning room: ' + room) ; 
+    });
+    
+    socket.on( 'returnToLobby', event => {
+      focus = LOBBY;
+      console.log( socket.id + ' has returned to lobby ' );
+    });
+    //artpad socket.io functions
+    socket.on('mirror-payload', (msg) => {
+      socket.broadcast.emit('mirror-package', msg)
+    });
+});
+
+module.exports = io;
