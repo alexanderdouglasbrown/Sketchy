@@ -7,33 +7,63 @@ a {
   color: #00B7FF;
 }
 
-canvas{
+#artpadCanvas{
   width:500px;
   height:500px;
+  margin-left: 30px;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
 }
 
-#chat{
+.inputBoxes{
+  padding-top: 10px;
+}
+
+#chat ul{
+  -webkit-padding-start: 0;
+}
+
+#chat, #rooms{
   background-color: lightgray;
   border-radius: 5px;
   font-weight: bold;
+  padding-bottom: 5px;
+  height: 65vh;
+  overflow: scroll;
+  max-height:100%;
+  overflow-x:hidden;
 }
 
-#chat li{
+#chat li, #rooms li{
   list-style-type: none;
+  padding-top: 2px;
+  padding-bottom: 2px;
 }
+
+#chat form{
+  padding-top: 5px;
+  width: 100%;
+}
+
+textarea{
+  resize: none;
+}
+
+#chat form button{
+  float: right;
+}
+
 #chat li:nth-child(odd) {
   background: #eee;
 }
 
 #toolbar{
+  margin-left: 30px;
   display: flex;
   justify-content: space-around;
-  border-style: solid;
-  border-width: 1px;
+  border-radius: 5px;
   width: 500px;
-  height: 46px;
+  height: 44px;
   background: lightgray;
   visibility: hidden;
 }

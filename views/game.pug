@@ -2,19 +2,63 @@ extends layout
 
 block content
   main#main.container
-    canvas#artpadCanvas
-    br
-    div#toolbar
-      img(src="images/artpad/highlightBlack.png")#blackBrush
-      img(src="images/artpad/colorRed.png")#redBrush
-      img(src="images/artpad/colorOrange.png")#orangeBrush
-      img(src="images/artpad/colorGreen.png")#greenBrush
-      img(src="images/artpad/colorTeal.png")#tealBrush
-      img(src="images/artpad/colorBlue.png")#blueBrush
-      span.spacer
-      img(src="images/artpad/eraser.png")#eraser
-      img(src="images/artpad/undo.png")#undo
-      img(src="images/artpad/clear.png")#clear
+    //- h1#readOnlyh1 Read Only is ON
+    //- button#readOnlyButton Toggle Read-Only
+    //- br
+    div.row
+      div.col-xs-5.pull-right
+            div.col-xs-12#chat
+              ul
+                li Hey
+                li What's up?
+                li Start a game
+                li kk
+                li kk
+                li I need to put a lot of content in this line so I can tell how it flows over or something. I don't know, I just know I have to keep talking!!
+                li kk
+                li kk
+                li kk
+                li kk
+                li kk
+                li kk
+                li kk
+                li kk
+                li kk
+                li kk
+                li kk
+                li kk
+                li kk
+                li kk
+                li kk
+                li kk
+                li kk
+                li kk
+                li kk
+                li kk
+                li kk
+                li kk
+                li kk
+                li kk
+                li kk
+                li kk
+                li kk
+            form.input-group.inputBoxes
+              textarea.form-control(rows="1")#chatTextArea
+              span.input-group-btn
+                button.btn.btn-default#chatSendButton Send
+      canvas#artpadCanvas
+      br
+      div#toolbar
+        img(src="images/artpad/highlightBlack.png")#blackBrush
+        img(src="images/artpad/colorRed.png")#redBrush
+        img(src="images/artpad/colorOrange.png")#orangeBrush
+        img(src="images/artpad/colorGreen.png")#greenBrush
+        img(src="images/artpad/colorTeal.png")#tealBrush
+        img(src="images/artpad/colorBlue.png")#blueBrush
+        span.spacer
+        img(src="images/artpad/eraser.png")#eraser
+        img(src="images/artpad/undo.png")#undo
+        img(src="images/artpad/clear.png")#clear
 
     hr
     h1#readOnlyh1 Read Only is ON

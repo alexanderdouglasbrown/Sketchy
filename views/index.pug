@@ -3,14 +3,58 @@ extends layout
 block content
   main.container
     div.row
-      div.col-md-6
-        p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris molestie elit dui, id placerat mauris elementum nec. Cras mattis magna ac nunc tincidunt, vitae efficitur lectus efficitur. Aliquam sagittis gravida massa, eu semper odio volutpat ut. Sed blandit mi at purus porttitor aliquet. Fusce dictum massa eget vulputate molestie.
-      div.col-md-5.col-md-offset-1#chat
-        ul
-          li Hey
-          li What's up?
-          li Start a game
-          li kk
+      div.col-xs-7
+        div.col-xs-12#rooms
+          ul
+            a(href='/game')
+              li Game Room
+            a(href='/game')
+              li Cool Kids Only!!
+            a(href='/game')
+              li YeahyeahyeahJOIN
+        form.input-group.inputBoxes
+          input.form-control(type="text")
+          span.input-group-btn
+            button.btn.btn-default Create
+      div.col-xs-5
+        div.col-xs-12#chat
+          ul
+            li Hey
+            li What's up?
+            li Start a game
+            li kk
+            li kk
+            li I need to put a lot of content in this line so I can tell how it flows over or something. I don't know, I just know I have to keep talking!!
+            li kk
+            li kk
+            li kk
+            li kk
+            li kk
+            li kk
+            li kk
+            li kk
+            li kk
+            li kk
+            li kk
+            li kk
+            li kk
+            li kk
+            li kk
+            li kk
+            li kk
+            li kk
+            li kk
+            li kk
+            li kk
+            li kk
+            li kk
+            li kk
+            li kk
+            li kk
+            li kk
+        form.input-group.inputBoxes
+          textarea.form-control(rows="1")#chatTextArea
+          span.input-group-btn
+            button.btn.btn-default#chatSendButton Send
 
-    form(action='/game')
-      button.btn.btn-default Game Room
+    script(src="javascripts/chat.js")
