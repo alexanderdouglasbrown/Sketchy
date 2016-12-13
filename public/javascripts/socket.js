@@ -1,5 +1,12 @@
-  const socket = io();
 
+
+const socket = io();
+  //const UUID = require('../UUID/v4');
+
+  window.onload =  () => {
+    socket.emit('loadLobby', true);
+  }
+  
   $(document).ready( function() {
   
   $('#messages form').submit( function() {
@@ -16,22 +23,31 @@
        $('.messages').append('<div class = "message"> ' + msg + '</div>');
     });
     
-    socket.on('playerList', newplayer => {
-        console.log(newplayer);
-       $('.users').append('<div class = "online" id = ' + newplayer +' > ' + newplayer + '</div>');
-    });
     
     socket.on('playerDelete', id => {
       $('#' + id ).remove();
       
     }); 
     
-    $( '#playerlist').click( event => {
-      var message = "Private messaging : " + event.target.id;
-      //socket.in(event.target.id)
-      socket.emit('private-chat', event.target.id);
-  });
-     $('#lobbybutton').click( event => {
-       socket.emit('returnToLobby', true );
+    $( '#gameroomlist').click( event => {
+       console.log(event.target.id);
+       window.location =  '/game/' + event.target.id 
+       //$.post('/loadgame', {roomid : event.target.id});
+       //
+    });
+    
+    socket.on('newgame', data => {
+      $('.activegames').append('<a class = "games list-group-item active" id = "' + data.gameroomid + '" > ' + data.gameroomname + '</a>');
+    });
+              
+     $('#gamerooms form').submit( event => {
+       const roomname = $('#gamerooms input').val();
+       if (roomname.length > 0){
+         socket.emit('createroom', roomname);
+         $('#gamerooms input').val('');
+
+       console.log('its working' );
+       //socket.emit('returnToLobby', true );
+       }
      });
 });

@@ -7,7 +7,7 @@ block content
       .col-lg-5
         .messages.well.well-sm
       .col-lg-3
-        .users#playerlist.well.well-sm
+        .activegames#gameroomlist.list-group.well.well-sm
     .row
       .col-lg-5
         .input-group
@@ -17,6 +17,13 @@ block content
             .col-lg-3
                 span.input-group-btn
                 button#submit.btn.btn-default Send
-      button#lobbybutton.btn.btn-default Return to Lobby
+      #gamerooms
+        .col-lg-5
+          form(action = " ")
+            .col-lg-5
+              input.form-control(type='text', placeholder='Room Name', autocomplete = 'off')
+            .col-lg-2
+              span.input-group-btn
+              button#creategamebutton.btn.btn-default Create new room 
       
   script(src='/javascripts/socket.js')

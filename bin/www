@@ -22,7 +22,10 @@ app.set('port', port);
 //some temporary chat variables
 const LOBBY = 'lobby-chat';
 const PLAYERLIST = 'player-list';
-let playerList = [];
+
+
+const UUID = require ('uuid/v4');
+let gameRoomList  = [];
 
 
 const socketIO = require('socket.io');
@@ -86,7 +89,7 @@ function onError(error) {
 /**
  * Event listener for HTTP server "listening" event.
  */
-
+http://localhost:3000/chat
 function onListening() {
   var addr = server.address();
   var bind = typeof addr === 'string'
@@ -97,27 +100,32 @@ function onListening() {
 
 io.on('connection', socket => {
     //before session 
-    let focus = LOBBY ;  
+    let focus = '';  
     console.log( 'client connected id : '  + socket.id);
-    playerList.push(socket.id);
-  
-    socket.broadcast.emit('resync')
-    socket.join(LOBBY);
     socket.join(socket.id);
-  
-    io.to(LOBBY).emit('playerList', socket.id);
     
-    for( let inc = 0; inc < playerList.length ; inc++){
-      if (playerList[inc] != socket.id){
-        io.to(socket.id).emit('playerList', playerList[inc]);
-      }
-    }
+    socket.on('loadLobby' , data => {
+      focus = LOBBY ;
+      socket.join(LOBBY);
+      for(let i = 0; i < gameRoomList.length; i++){
+        console.log(gameRoomList[i].gameroomname);
+        io.to(socket.id).emit('newgame' , gameRoomList[i] );
+      };
+    });
+  
+    socket.on('loadGame' , roomid => {
+          focus = roomid;
+          console.log(roomid);
+          socket.join(roomid);
+          socket.broadcast.to(focus).emit('resync')
+    });
+              
   //  }
     socket.on( 'disconnect', data => {
       console.log( 'client disconnected' );
-      let index = playerList.indexOf(socket.id);
-      io.emit('playerDelete' , socket.id);
-      playerList.splice(index, 1);
+     // let index = playerList.indexOf(socket.id);
+      //io.emit('playerDelete' , socket.id);
+     // playerList.splice(index, 1);
       
     }) 
     
@@ -129,6 +137,17 @@ io.on('connection', socket => {
           io.to(socket.id).emit('chat message', msg);
           io.to(focus).emit('chat message', msg);
       }
+    });
+    
+    socket.on('createroom', roomname => {
+        const roomid = UUID(); 
+        const package = {
+           gameroomid : roomid , 
+           gameroomname : roomname
+        }
+        gameRoomList.push(package); 
+      
+        io.to(LOBBY).emit('newgame' , package );
     });
   
     socket.on ( 'private-chat', room =>  {
@@ -142,8 +161,22 @@ io.on('connection', socket => {
     });
     //artpad socket.io functions
     socket.on('mirror-payload', (msg) => {
-      socket.broadcast.emit('mirror-package', msg)
+      socket.broadcast.to(focus).emit('mirror-package', msg)
     });
 });
+
+function initializeSocket (socket) {
+  
+  /*initialize socket info
+  
+    socketid
+    name 
+    focus 
+    isInitialized
+    isActive
+    ...
+    
+    */
+}
 
 module.exports = io;

@@ -60,16 +60,17 @@ canvas{
   background-color: #fff;
 }
 
-.online {
-  size: 16px;
-  padding-top: 2px;
+ .games.list-group-item {
+  font-size: 18px;
+
   width: 100%;
+  color: black;
   background-color: #ddd;
   border-radius: 3px;
-  margin-top: 2px;
+  border:none;
 }
 
-.online:nth-child(odd) {
+ .games:nth-child(odd) {
   
     background-color: #fff;
 }
@@ -81,7 +82,7 @@ canvas{
 }
 
 
-.users {
+.activegames {
   min-height: 300px;
   padding-left: 15px;
 }
