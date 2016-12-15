@@ -1,0 +1,29 @@
+extends layout
+
+block content
+  h1 Basic Chat App
+  #messages
+    .row
+      .col-lg-5
+        .messages.well.well-sm
+      .col-lg-3
+        .activegames#gameroomlist.list-group.well.well-sm
+    .row
+      .col-lg-5
+        .input-group
+        form(action = " ")
+            .col-lg-9
+                input.form-control(type='text', placeholder='Message...', autocomplete = 'off')
+            .col-lg-3
+                span.input-group-btn
+                button#submit.btn.btn-default Send
+      #gamerooms
+        .col-lg-5
+          form(action = " ")
+            .col-lg-5
+              input.form-control(type='text', placeholder='Room Name', autocomplete = 'off')
+            .col-lg-2
+              span.input-group-btn
+              button#creategamebutton.btn.btn-default Create new room 
+      
+  script(src='/javascripts/socket.js')
