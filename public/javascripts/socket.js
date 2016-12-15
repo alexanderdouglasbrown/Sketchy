@@ -31,13 +31,18 @@ const socket = io();
     
     $( '#gameroomlist').click( event => {
        console.log(event.target.id);
+       socket.emit('joinRoom' , event.target.id)
        window.location =  '/game/' + event.target.id 
        //$.post('/loadgame', {roomid : event.target.id});
        //
     });
     
+    socket.on('enterRoom', roomid => {
+      window.location = '/game/' + roomid
+    });
+    
     socket.on('newgame', data => {
-      $('.activegames').append('<a class = "games list-group-item active" id = "' + data.gameroomid + '" > ' + data.gameroomname + '</a>');
+      $('.activegames').append('<a class = "games list-group-item active" id = "' + data.gameroomid + '" > ' + data.gameroomname + ' [ ' + data.playerlist.length + ' ] </a>');
     });
               
      $('#gamerooms form').submit( event => {
