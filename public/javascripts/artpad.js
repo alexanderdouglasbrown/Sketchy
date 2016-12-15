@@ -16,17 +16,15 @@ const artpad = {
     readOnly: true
 }
 
-const socket = io();
 let payload = []
 
-window.onload = () => {
-    socket.emit('loadGame', gameid);
-  
+$('#artpadCanvas').ready(() => {
+
     artpad.canvas.width = artpad.width
     artpad.canvas.height = artpad.height
     artpad.context = artpad.canvas.getContext("2d")
 
-    setInterval(sendPayload, 16)
+    setInterval(sendPayload, 66)
 
     artpad.context.fillStyle = "white"
     artpad.context.fillRect(0, 0, artpad.width, artpad.height)
@@ -34,8 +32,9 @@ window.onload = () => {
     artpad.context.lineJoin = "round"
     artpad.context.lineCap = "round"
     artpad.context.strokeStyle = "black"
-    
-}
+
+})
+
 
 $('#artpadCanvas').mousedown(pressDown)
 $('#artpadCanvas').on("touchstart", pressDown)
@@ -52,8 +51,8 @@ $('#artpadCanvas').on("touchcancel", cancelMouseHold)
 function pressDown(e) {
     if (!artpad.readOnly) {
         e = e || window.event
-        const mouseX = (e.pageX - this.offsetLeft)
-        const mouseY = (e.pageY - this.offsetTop)
+        const mouseX = (e.pageX - this.offsetLeft + 1)
+        const mouseY = (e.pageY - this.offsetTop + 1)
         e.preventDefault()
 
         if (artpad.dirtyUndo)
@@ -83,8 +82,8 @@ function pressDown(e) {
 function pressMove(e) {
     if (artpad.isHolding && !artpad.readOnly) {
         e = e || window.event
-        const mouseX = (e.pageX - this.offsetLeft)
-        const mouseY = (e.pageY - this.offsetTop)
+        const mouseX = (e.pageX - this.offsetLeft + 1)
+        const mouseY = (e.pageY - this.offsetTop + 1)
         paint(mouseX, mouseY)
         buildPayload(mouseX, mouseY, true, artpad.context.strokeStyle)
         buildLastChange(mouseX, mouseY, true, artpad.context.strokeStyle)
@@ -350,13 +349,27 @@ function clearHighlights() {
 }
 
 $('#readOnlyButton').click(() => {
+    if (artpad.readOnly) {
+        toggleReadOnly(false)
+    } else {
+        toggleReadOnly(true)
+    }
+})
+
+function toggleReadOnly(readOnly) {
     artpad.history = []
     artpad.lastChange = []
+    payload = []
+    artpad.dirtyUndo = false
+    artpad.isHolding = false
+    artpad.mirror_isHolding = false
+    artpad.clearWasPressed = false
+    artpad.context.beginPath()
 
     if (artpad.readOnly) {
+        artpad.readOnly = false
         clearScreen()
         sendClearScreen()
-        artpad.readOnly = false
         $('#readOnlyh1').text("Read Only is OFF")
         $('#toolbar').css('visibility', 'visible')
         setBrush("black")
@@ -367,4 +380,4 @@ $('#readOnlyButton').click(() => {
         setBrush("black")
         $('#artpadCanvas').css('cursor', 'auto')
     }
-})
+}

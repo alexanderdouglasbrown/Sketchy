@@ -134,7 +134,6 @@ io.on('connection', socket => {
       if (focus == LOBBY){
          io.to(focus).emit('chat message', msg);
       } else {
-          io.to(socket.id).emit('chat message', msg);
           io.to(focus).emit('chat message', msg);
       }
     });

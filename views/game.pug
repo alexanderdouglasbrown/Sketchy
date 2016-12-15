@@ -1,26 +1,38 @@
 extends layout
 block content
-  main#main
+
+  main#main.container
     roominfo#roominfo(data-id = gameid)
-      
-    canvas#artpadCanvas
-    br
-    div#toolbar
-      img(src="/images/artpad/highlightBlack.png")#blackBrush
-      img(src="/images/artpad/colorRed.png")#redBrush
-      img(src="/images/artpad/colorOrange.png")#orangeBrush
-      img(src="/images/artpad/colorGreen.png")#greenBrush
-      img(src="/images/artpad/colorTeal.png")#tealBrush
-      img(src="/images/artpad/colorBlue.png")#blueBrush
-      span.spacer
-      img(src="/images/artpad/eraser.png")#eraser
-      img(src="/images/artpad/undo.png")#undo
-      img(src="/images/artpad/clear.png")#clear
+
+    div.row
+      .col-md-5.col-sm-12.pull-right#messages
+        .col-xs-12#chat
+          ul.messages
+        form.input-group.inputBoxes(action=" ")
+          input.form-control(type="text",rows="1", autocomplete = "off")#chatTextArea
+          span.input-group-btn
+            button.btn.btn-default(type = "submit")#submit Submit
+      canvas#artpadCanvas
+      br
+      div#toolbar
+        img(src="/images/artpad/highlightBlack.png")#blackBrush
+        img(src="/images/artpad/colorRed.png")#redBrush
+        img(src="/images/artpad/colorOrange.png")#orangeBrush
+        img(src="/images/artpad/colorGreen.png")#greenBrush
+        img(src="/images/artpad/colorTeal.png")#tealBrush
+        img(src="/images/artpad/colorBlue.png")#blueBrush
+        span.spacer
+        img(src="/images/artpad/eraser.png")#eraser
+        img(src="/images/artpad/undo.png")#undo
+        img(src="/images/artpad/clear.png")#clear
 
     hr
     h1#readOnlyh1 Read Only is ON
     button#readOnlyButton Toggle Read-Only
     
-    hr 
-    a(href = '/chat' class = 'btn btn-default') Click to return to the Lobby
-    script(src="/javascripts/artpad.js")
+  script(src="/javascripts/artpad.js")
+  script(src='/javascripts/socket.js')
+  script.
+    window.onload = () => {
+      socket.emit('loadGame', gameid);
+    }
