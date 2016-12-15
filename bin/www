@@ -101,6 +101,7 @@ function onListening() {
 io.on('connection', socket => {
     //before session 
     let focus = '';  
+    let inGame = false;
     console.log( 'client connected id : '  + socket.id);
     socket.join(socket.id);
     
@@ -115,6 +116,7 @@ io.on('connection', socket => {
   
     socket.on('loadGame' , roomid => {
           focus = roomid;
+          inGame = true;
           console.log(roomid);
           socket.join(roomid);
           socket.broadcast.to(focus).emit('resync')
@@ -123,12 +125,28 @@ io.on('connection', socket => {
   //  }
     socket.on( 'disconnect', data => {
       console.log( 'client disconnected' );
-     // let index = playerList.indexOf(socket.id);
-      //io.emit('playerDelete' , socket.id);
-     // playerList.splice(index, 1);
       
+      if( inGame) {
+        for(let i = 0; i < gameRoomList.length; i++){
+          if(gameRoomList[i].gameroomid == focus ) {
+              let index = gameRoomList[i].playerlist.indexOf(focus)
+              if (index != -1){
+                gameRoomList[i].playerlist.splice(index, 1 );
+              }
+            }
+          };
+        
+      }
     }) 
     
+    socket.on('joinRoom', roomid => {
+      for(let i = 0; i < gameRoomList.length; i++){
+        if(gameRoomList[i].gameroomid == roomid ) {
+          gameRoomList[i].playerlist.push(socket.id);
+        }
+      }
+    });
+  
     socket.on('chat message', msg =>{
          console.log('message: ' + msg);
       if (focus == LOBBY){
@@ -142,11 +160,13 @@ io.on('connection', socket => {
         const roomid = UUID(); 
         const package = {
            gameroomid : roomid , 
-           gameroomname : roomname
+           gameroomname : roomname ,
+           playerlist : []
         }
+        package.playerlist.push(socket.id);
         gameRoomList.push(package); 
-      
         io.to(LOBBY).emit('newgame' , package );
+        io.to(socket.id).emit('enterRoom' , roomid) ;
     });
   
     socket.on ( 'private-chat', room =>  {
@@ -178,4 +198,4 @@ function initializeSocket (socket) {
     */
 }
 
-module.exports = io;
+
