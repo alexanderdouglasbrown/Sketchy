@@ -7,6 +7,24 @@ a {
   color: #00B7FF;
 }
 
+#statusBar{
+  width: 500px;
+  height: 50px;
+  border-style: solid;
+  border-width: 0px;
+  margin-left: 30px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+#statusBar p{
+  font-size: 28pt;
+}
+
+#statusBar span{
+  color: red;
+}
+
 #artpadCanvas{
   width:500px;
   height:500px;
@@ -33,6 +51,7 @@ a {
   font-weight: bold;
   padding-bottom: 5px;
   height: 65vh;
+  min-height: 550px;
   overflow: scroll;
   max-height:100%;
   overflow-x:hidden;
