@@ -4,7 +4,7 @@ block content
   main#main.container
     roominfo#roominfo(data-id = gameid)
 
-    div.row
+    .row
       .col-md-5.col-sm-12.pull-right#messages
         .col-xs-12#chat
           ul.messages
@@ -12,19 +12,23 @@ block content
           input.form-control(type="text",rows="1", autocomplete = "off")#chatTextArea
           span.input-group-btn
             button.btn.btn-default(type = "submit")#submit Submit
+      #statusBar
+        p 1:00 - Draw
+          span  CAT
       canvas#artpadCanvas
       br
-      div#toolbar
+      #toolbar
         img(src="/images/artpad/highlightBlack.png")#blackBrush
         img(src="/images/artpad/colorRed.png")#redBrush
         img(src="/images/artpad/colorOrange.png")#orangeBrush
         img(src="/images/artpad/colorGreen.png")#greenBrush
         img(src="/images/artpad/colorTeal.png")#tealBrush
         img(src="/images/artpad/colorBlue.png")#blueBrush
-        span.spacer
         img(src="/images/artpad/eraser.png")#eraser
-        img(src="/images/artpad/undo.png")#undo
+        span.spacer
         img(src="/images/artpad/clear.png")#clear
+        img(src="/images/artpad/undo.png")#undo
+        img(src="/images/artpad/skip.png")#skip
 
     hr
     h1#readOnlyh1 Read Only is ON
