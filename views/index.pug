@@ -2,59 +2,24 @@ extends layout
 
 block content
   main.container
-    div.row
-      div.col-xs-7
-        div.col-xs-12#rooms
-          ul
-            a(href='/game')
-              li Game Room
-            a(href='/game')
-              li Cool Kids Only!!
-            a(href='/game')
-              li YeahyeahyeahJOIN
-        form.input-group.inputBoxes
+    .row
+      .col-md-7.col-sm-12#gamerooms
+        .col-xs-12#rooms
+          ul.activegames
+        form.input-group.inputBoxes(action = " ")
           input.form-control(type="text")
           span.input-group-btn
-            button.btn.btn-default Create
-      div.col-xs-5
-        div.col-xs-12#chat
-          ul
-            li Hey
-            li What's up?
-            li Start a game
-            li kk
-            li kk
-            li I need to put a lot of content in this line so I can tell how it flows over or something. I don't know, I just know I have to keep talking!!
-            li kk
-            li kk
-            li kk
-            li kk
-            li kk
-            li kk
-            li kk
-            li kk
-            li kk
-            li kk
-            li kk
-            li kk
-            li kk
-            li kk
-            li kk
-            li kk
-            li kk
-            li kk
-            li kk
-            li kk
-            li kk
-            li kk
-            li kk
-            li kk
-            li kk
-            li kk
-            li kk
-        form.input-group.inputBoxes
-          textarea.form-control(rows="1")#chatTextArea
+            button.btn.btn-default#creategamebutton Create Room
+      .col-md-5.col-sm-12#messages
+        .col-xs-12#chat
+          ul.messages
+        form.input-group.inputBoxes(action=" ")
+          input.form-control(type="text",rows="1", autocomplete = "off")#chatTextArea
           span.input-group-btn
-            button.btn.btn-default#chatSendButton Send
+            button.btn.btn-default(type = "submit")#submit Submit
 
-    script(src="javascripts/chat.js")
+    script(src='/javascripts/socket.js')
+    script.
+      window.onload = () => {
+        socket.emit('loadLobby', true);
+      }

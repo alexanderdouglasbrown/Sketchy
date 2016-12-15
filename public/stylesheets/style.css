@@ -19,8 +19,12 @@ a {
   padding-top: 10px;
 }
 
-#chat ul{
+#chat ul, #rooms ul{
   -webkit-padding-start: 0;
+}
+
+#rooms ul li a{
+  cursor: pointer;
 }
 
 #chat, #rooms{
@@ -53,9 +57,9 @@ textarea{
   float: right;
 }
 
-#chat li:nth-child(odd) {
+/*#chat li:nth-child(odd) {
   background: #eee;
-}
+}*/
 
 #toolbar{
   margin-left: 30px;
@@ -80,3 +84,50 @@ textarea{
 .spacer{
   width:40px;
 }
+
+/* ADD STUFF*/
+/*#messages {
+ padding-left: 15px;
+}
+
+.messages {
+  min-height: 300px;
+}
+
+.message {
+  padding-top: 2px;
+  width: 100%;
+  background-color: #ddd;
+  border-radius: 3px;
+  margin-top: 2px;
+}
+
+.message:nth-child(odd) {
+  background-color: #fff;
+}
+
+.games.list-group-item {
+  font-size: 18px;
+
+  width: 100%;
+  color: black;
+  background-color: #ddd;
+  border-radius: 3px;
+  border:none;
+}
+
+.games:nth-child(odd) {
+    background-color: #fff;
+}
+
+#submit {
+  width : 100%;
+}
+.well {
+  overflow-y: scroll;
+}
+
+.activegames {
+  min-height: 300px;
+  padding-left: 15px;
+}*/
