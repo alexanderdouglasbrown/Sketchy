@@ -2,10 +2,9 @@ extends layout
 
 block content 
   main.container
-    h1 Welcome #{player}
     .row
-      //- .col-xs-12#topBar
-      //-   p Welcome, [player]
+      .col-xs-12#topBar
+        p Welcome, #{player}
       .col-md-7.col-sm-12#gamerooms
         .col-xs-12#rooms
           ul.activegames
