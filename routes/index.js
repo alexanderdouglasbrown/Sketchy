@@ -1,6 +1,8 @@
 let express = require('express');
 let router = express.Router();
 const UUID = require('uuid/v4');
+var passport = require('passport')
+require('../config/passport')(passport)
 let random;
 
 /* GET home page. */
@@ -8,7 +10,7 @@ router.get('/', function (req, res, next) {
   setSession(req.session);
   req.session.roomId = ' ';
   req.session.inGame = false;
-  res.render('index', { title: 'Sketchy', username: req.session.username, id: req.session.id });
+  res.render('index', { title: 'Sketchy', username: req.session.username, id: req.session.id, player: req.user });
 });
 /*
 router.get('/game', function(req, res, next) {
@@ -26,7 +28,7 @@ router.get('/game/:id', function (req, res, next) {
   setSession(req.session)
   req.session.roomId = req.params.id
   req.session.inGame = true;
-  res.render('game', { title: 'Sketchy', roomid: req.params.id, id: req.session.id, player : request.user  })
+  res.render('game', { title: 'Sketchy', roomid: req.params.id, id: req.session.id, player : req.user  })
   //res.send( 'Your game is ' + req.params.id )
 });
 
