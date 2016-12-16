@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var passport = require('passport')
 
 require('./config/passport')(passport)
+var session = require('express-session');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -16,6 +17,7 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+app.set('trust proxy', 1) 
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -32,13 +34,12 @@ app.use(passport.initialize())
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
+app.use(session({secret : 'Testing', resave: false, saveUninitialized: true, cookie : {}}));
 
 app.use('/', index);
 app.use('/users', users);
-//adding chat for testing
-//app.use('/chat' , index);
 
+//index(app);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   var err = new Error('Not Found');

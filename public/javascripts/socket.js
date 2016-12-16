@@ -6,9 +6,9 @@
 $(document).ready(function () {
 
   $('#messages form').submit(function () {
-    const val = getTimestamp() + ' ' + player + ' ' + $('#messages input').val();
+    const val = $('#messages input').val();
     if (val.length > 0) {
-      socket.emit('chat message', val);
+      socket.emit('chat message', getTimestamp() + ' ' + player + ' ' + val);
       $('#messages input').val('');
 
     }
