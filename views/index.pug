@@ -1,7 +1,8 @@
 extends layout
 
-block content
+block content 
   main.container
+    h1 Welcome #{player}
     .row
       //- .col-xs-12#topBar
       //-   p Welcome, [player]
@@ -19,10 +20,11 @@ block content
           input.form-control(type="text",rows="1", autocomplete = "off")#chatTextArea
           span.input-group-btn
             button.btn.btn-default(type = "submit")#submit Submit
+        script.
+          const player = '#{player}'
 
     script(src='/javascripts/socket.js')
     script.
       window.onload = () => {
         socket.emit('loadLobby', {username : "#{username}", id : "#{id}"});
       }
-

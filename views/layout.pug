@@ -24,4 +24,10 @@ html
           a(href="/")
             img(src="/images/logo.png")
 
+          .row#sign-in
+            .col-lg-4
+              a.btn.btn-default( href='/auth', role='button') Sign in with Google!
+            .col-lg-8
+              a.btn.btn-default( href='/logout', role='button') Sign out (without Google)!
+
     block content
