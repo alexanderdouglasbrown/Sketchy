@@ -348,7 +348,7 @@ function clearHighlights() {
     $('#eraser').attr('src', '/images/artpad/eraser.png')
 }
 
-$('#readOnlyButton').click(() => {
+$('#readOnlyButton').click(() => {name
     if (artpad.readOnly) {
         toggleReadOnly(false)
     } else {

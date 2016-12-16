@@ -21,6 +21,6 @@ block content
     script(src='/javascripts/socket.js')
     script.
       window.onload = () => {
-        socket.emit('loadLobby', true);
+        socket.emit('loadLobby', {username : "#{username}", id : "#{id}"});
       }
 
