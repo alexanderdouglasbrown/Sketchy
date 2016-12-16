@@ -5,7 +5,7 @@ block content
     roominfo#roominfo(data-id = gameid)
 
     .row
-      .col-md-5.col-sm-12.pull-right#messages
+      .col-md-5.col-sm-12.pull-right#messages.chatoffset
         .col-xs-12#chat
           ul.messages
         form.input-group.inputBoxes(action=" ")
@@ -36,6 +36,7 @@ block content
     
   script(src="/javascripts/artpad.js")
   script(src='/javascripts/socket.js')
+  script(src='/javascripts/game.js')
   script.
     window.onload = () => {
       socket.emit('loadGame', gameid);

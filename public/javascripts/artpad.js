@@ -1,5 +1,5 @@
 const gameid = document.getElementById('roominfo').dataset.id
-console.log(gameid);
+// console.log(gameid);
 
 const artpad = {
     canvas: document.getElementById("artpadCanvas"),

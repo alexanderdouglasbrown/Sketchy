@@ -28,7 +28,8 @@ $(document).ready(function () {
 
   $('#rooms').click(event => {
     //console.log(event.target.id);
-    window.location = '/game/' + event.target.id
+    if (event.target.id != "rooms")
+      window.location = '/game/' + event.target.id
     //$.post('/loadgame', {roomid : event.target.id});
     //
   });
