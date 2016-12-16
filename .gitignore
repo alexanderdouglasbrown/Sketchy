@@ -1,4 +1,5 @@
 .DS_Store
+config/authentication.js
 
 ## Generated from GitHub for Node
 # Logs
@@ -38,4 +39,3 @@ jspm_packages
 
 # Optional REPL history
 .node_repl_history
-
