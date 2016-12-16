@@ -28,10 +28,14 @@ $(document).ready(function () {
 
   $('#rooms').click(event => {
     //console.log(event.target.id);
+    socket.emit('joinRoom',  event.target.id)
     window.location = '/game/' + event.target.id
     //$.post('/loadgame', {roomid : event.target.id});
     //
   });
+  socket.on('enterRoom', roomid => {
+     window.location = '/game/' + roomid
+  })
 
   socket.on('newgame', data => {
     $('.activegames').prepend('<li><a class = "games list-group-item default" id = "' + data.gameroomid + '" > ' + data.gameroomname + '</a></li>');
@@ -41,6 +45,7 @@ $(document).ready(function () {
     const roomname = $('#gamerooms input').val();
     if (roomname.length > 0) {
       socket.emit('createroom', roomname);
+
       $('#gamerooms input').val('');
 
       //console.log('its working' );

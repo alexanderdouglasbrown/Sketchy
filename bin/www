@@ -103,39 +103,43 @@ io.on('connection', socket => {
     let focus = '';  
     let inGame = false;
     console.log( 'client connected id : '  + socket.id);
-    socket.join(socket.id);
+
     
     socket.on('loadLobby' , data => {
+      console.log(data.username)
+     // socket.id = data.id
       focus = LOBBY ;
       socket.join(LOBBY);
+      socket.join(socket.id);
       for(let i = 0; i < gameRoomList.length; i++){
         console.log(gameRoomList[i].gameroomname);
         io.to(socket.id).emit('newgame' , gameRoomList[i] );
       };
     });
   
-    socket.on('loadGame' , roomid => {
-          focus = roomid;
+    socket.on('loadGame' , data => {
+          focus = data.roomid;
           inGame = true;
-          console.log(roomid);
-          socket.join(roomid);
+          socket.id = data.id
+          console.log(data.id);
+          socket.join(data.roomid);
+          socket.join(socket.id);
           socket.broadcast.to(focus).emit('resync')
     });
               
   //  }
     socket.on( 'disconnect', data => {
       console.log( 'client disconnected' );
-      
-      if( inGame) {
+
+      console.log( socket.id);
+      console.log( focus );
+      if(inGame) {
         for(let i = 0; i < gameRoomList.length; i++){
           if(gameRoomList[i].gameroomid == focus ) {
-              let index = gameRoomList[i].playerlist.indexOf(focus)
-              if (index != -1){
+              let index = gameRoomList[i].playerlist.indexOf(socket.id)
                 gameRoomList[i].playerlist.splice(index, 1 );
-              }
             }
           };
-        
       }
     }) 
     
@@ -143,6 +147,7 @@ io.on('connection', socket => {
       for(let i = 0; i < gameRoomList.length; i++){
         if(gameRoomList[i].gameroomid == roomid ) {
           gameRoomList[i].playerlist.push(socket.id);
+          console.log("number of players: " + gameRoomList[i].playerlist.length);
         }
       }
     });
@@ -154,7 +159,7 @@ io.on('connection', socket => {
       } else {
           io.to(focus).emit('chat message', msg);
       }
-    });
+    });     
     
     socket.on('createroom', roomname => {
         const roomid = UUID(); 
@@ -166,6 +171,7 @@ io.on('connection', socket => {
         package.playerlist.push(socket.id);
         gameRoomList.push(package); 
         io.to(LOBBY).emit('newgame' , package );
+
         io.to(socket.id).emit('enterRoom' , roomid) ;
     });
   
