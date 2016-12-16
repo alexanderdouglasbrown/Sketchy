@@ -28,13 +28,16 @@ $(document).ready(function () {
 
   $('#rooms').click(event => {
     //console.log(event.target.id);
-    socket.emit('joinRoom',  event.target.id)
-    window.location = '/game/' + event.target.id
+    if (event.target.id != "rooms") {
+      window.location = '/game/' + event.target.id
+      socket.emit('joinRoom', event.target.id)
+    }
+
     //$.post('/loadgame', {roomid : event.target.id});
     //
   });
   socket.on('enterRoom', roomid => {
-     window.location = '/game/' + roomid
+    window.location = '/game/' + roomid
   })
 
   socket.on('newgame', data => {

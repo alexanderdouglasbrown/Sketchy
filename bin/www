@@ -24,8 +24,8 @@ const LOBBY = 'lobby-chat';
 const PLAYERLIST = 'player-list';
 
 
-const UUID = require ('uuid/v4');
-let gameRoomList  = [];
+const UUID = require('uuid/v4');
+let gameRoomList = [];
 
 
 const socketIO = require('socket.io');
@@ -66,7 +66,7 @@ function onError(error) {
   if (error.syscall !== 'listen') {
     throw error;
   }
-  
+
 
   var bind = typeof port === 'string'
     ? 'Pipe ' + port
@@ -99,99 +99,99 @@ function onListening() {
 }
 
 io.on('connection', socket => {
-    //before session 
-    let focus = '';  
-    let inGame = false;
-    console.log( 'client connected id : '  + socket.id);
+  //before session 
+  let playerid = ''
+  let focus = '';
+  let inGame = false;
+  console.log('client connected id : ' + socket.id);
 
-    
-    socket.on('loadLobby' , data => {
-      console.log(data.username)
-     // socket.id = data.id
-      focus = LOBBY ;
-      socket.join(LOBBY);
-      socket.join(socket.id);
-      for(let i = 0; i < gameRoomList.length; i++){
-        console.log(gameRoomList[i].gameroomname);
-        io.to(socket.id).emit('newgame' , gameRoomList[i] );
-      };
-    });
-  
-    socket.on('loadGame' , data => {
-          focus = data.roomid;
-          inGame = true;
-          socket.id = data.id
-          console.log(data.id);
-          socket.join(data.roomid);
-          socket.join(socket.id);
-          socket.broadcast.to(focus).emit('resync')
-    });
-              
+
+  socket.on('loadLobby', data => {
+    console.log(data.username)
+    // socket.id = data.id
+    playerid = data.id
+    focus = LOBBY;
+    socket.join(LOBBY);
+    socket.join(playerid);
+    for (let i = 0; i < gameRoomList.length; i++) {
+      console.log(gameRoomList[i].gameroomname);
+      io.to(playerid).emit('newgame', gameRoomList[i]);
+    };
+  });
+
+  socket.on('loadGame', data => {
+    focus = data.roomid;
+    playerid = data.id
+    inGame = true;
+    //socket.id = data.id
+    console.log(data.id);
+    socket.join(data.roomid);
+    socket.join(playerid);
+    socket.broadcast.to(focus).emit('resync')
+  });
+
   //  }
-    socket.on( 'disconnect', data => {
-      console.log( 'client disconnected' );
+  socket.on('disconnect', data => {
+    console.log('client disconnected');
 
-      console.log( socket.id);
-      console.log( focus );
-      if(inGame) {
-        for(let i = 0; i < gameRoomList.length; i++){
-          if(gameRoomList[i].gameroomid == focus ) {
-              let index = gameRoomList[i].playerlist.indexOf(socket.id)
-                gameRoomList[i].playerlist.splice(index, 1 );
-            }
-          };
-      }
-    }) 
-    
-    socket.on('joinRoom', roomid => {
-      for(let i = 0; i < gameRoomList.length; i++){
-        if(gameRoomList[i].gameroomid == roomid ) {
-          gameRoomList[i].playerlist.push(socket.id);
-          console.log("number of players: " + gameRoomList[i].playerlist.length);
+    console.log("Player id : " + playerid);
+    console.log(focus);
+    if (inGame) {
+      for (let i = 0; i < gameRoomList.length; i++) {
+        if (gameRoomList[i].gameroomid == focus) {
+          let index = gameRoomList[i].playerlist.indexOf(playerid)
+          gameRoomList[i].playerlist.splice(index, 1);
         }
-      }
-    });
-  
-    socket.on('chat message', msg =>{
-         console.log('message: ' + msg);
-      if (focus == LOBBY){
-         io.to(focus).emit('chat message', msg);
-      } else {
-          io.to(focus).emit('chat message', msg);
-      }
-    });     
-    
-    socket.on('createroom', roomname => {
-        const roomid = UUID(); 
-        const package = {
-           gameroomid : roomid , 
-           gameroomname : roomname ,
-           playerlist : []
-        }
-        package.playerlist.push(socket.id);
-        gameRoomList.push(package); 
-        io.to(LOBBY).emit('newgame' , package );
+      };
+    }
+  })
 
-        io.to(socket.id).emit('enterRoom' , roomid) ;
-    });
-  
-    socket.on ( 'private-chat', room =>  {
-      focus = room;
-      console.log(socket.id +' is joinning room: ' + room) ; 
-    });
-    
-    socket.on( 'returnToLobby', event => {
-      focus = LOBBY;
-      console.log( socket.id + ' has returned to lobby ' );
-    });
-    //artpad socket.io functions
-    socket.on('mirror-payload', (msg) => {
-      socket.broadcast.to(focus).emit('mirror-package', msg)
-    });
+  socket.on('joinRoom', roomid => {
+    for (let i = 0; i < gameRoomList.length; i++) {
+      if (gameRoomList[i].gameroomid == roomid) {
+        gameRoomList[i].playerlist.push(playerid);
+        console.log("number of players: " + gameRoomList[i].playerlist.length);
+      }
+    }
+  });
+
+  socket.on('chat message', msg => {
+    console.log('message: ' + msg);
+     console.log('focus: ' + focus);
+    io.to(focus).emit('chat message', msg);
+  });
+
+  socket.on('createroom', roomname => {
+    const roomid = UUID();
+    const package = {
+      gameroomid: roomid,
+      gameroomname: roomname,
+      playerlist: []
+    }
+    package.playerlist.push(playerid);
+    gameRoomList.push(package);
+    io.to(LOBBY).emit('newgame', package);
+
+    io.to(playerid).emit('enterRoom', roomid);
+  });
+
+  socket.on('private-chat', room => {
+    focus = room;
+    console.log(playerid + ' is joinning room: ' + room);
+  });
+
+  socket.on('returnToLobby', event => {
+    focus = LOBBY;
+    console.log(playerid + ' has returned to lobby ');
+  });
+  //artpad socket.io functions
+  socket.on('mirror-payload', (msg) => {
+    socket.broadcast.to(focus).emit('mirror-package', msg)
+  });
 });
 
-function initializeSocket (socket) {
-  
+function initializeSocket(socket) {
+
   /*initialize socket info
   
     socketid
@@ -203,5 +203,4 @@ function initializeSocket (socket) {
     
     */
 }
-
 
