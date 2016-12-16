@@ -6,7 +6,7 @@
 $(document).ready(function () {
 
   $('#messages form').submit(function () {
-    const val = $('#messages input').val();
+    const val = getTimestamp() + ' ' + player + ' ' + $('#messages input').val();
     if (val.length > 0) {
       socket.emit('chat message', val);
       $('#messages input').val('');
@@ -49,3 +49,34 @@ $(document).ready(function () {
     return false;
   });
 });
+
+function getTimestamp() {
+  var currentTime = new Date()
+  var timezoneOffset = currentTime.getTimezoneOffset() / 60
+
+  var currentHour = ( 
+    () => {
+      var hour = currentTime.getUTCHours()
+      if( timezoneOffset < 0 )
+        hour += timezoneOffset
+      else  
+        hour -= timezoneOffset
+      if( hour < 0 )
+        hour += 24
+      else if( hour >= 24 )
+        hour -= 24
+      return hour
+    } 
+  )()
+
+  var currentMinutes = ( 
+      () => {
+      minutes = currentTime.getUTCMinutes()
+      if( minutes < 10 ) 
+        minute = '0' + miuntes
+      return minutes
+    } 
+  )()
+
+  return '[' + currentHour + ':' + currentMinutes + ']'
+}
