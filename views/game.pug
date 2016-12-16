@@ -2,7 +2,7 @@ extends layout
 block content
 
   main#main.container
-    roominfo#roominfo(data-id = gameid)
+    roominfo#roominfo(data-id = roomid)
 
     .row
       .col-md-5.col-sm-12.pull-right#messages.chatoffset
@@ -39,5 +39,5 @@ block content
   script(src='/javascripts/game.js')
   script.
     window.onload = () => {
-      socket.emit('loadGame', gameid);
+      socket.emit('loadGame', {roomid : gameid, id : "#{id}"});
     }
