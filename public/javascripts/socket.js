@@ -30,7 +30,7 @@ $(document).ready(function () {
     //console.log(event.target.id);
     if (event.target.id != "rooms" && event.target.id != "") {
       window.location = '/game/' + event.target.id
-      socket.emit('joinRoom', event.target.id)
+      // socket.emit('joinRoom', event.target.id)
     }
 
     //$.post('/loadgame', {roomid : event.target.id});

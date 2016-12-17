@@ -108,7 +108,6 @@ io.on('connection', socket => {
 
   socket.on('loadLobby', data => {
     console.log(data.username)
-    // socket.id = data.id
     playerid = data.id
     focus = LOBBY;
     socket.join(LOBBY);
@@ -123,32 +122,32 @@ io.on('connection', socket => {
     focus = data.roomid;
     playerid = data.id
     inGame = true;
-    //socket.id = data.id
     console.log(data.id);
     socket.join(data.roomid);
     socket.join(playerid);
     socket.broadcast.to(focus).emit('resync')
     for (let i = 0; i < gameRoomList.length; i++) {
       if (gameRoomList[i].gameroomid == data.roomid) {
-        gameRoomList[i].playerlist.push(playerid);
+        gameRoomList[i].playerlist.push(playerid)
+        io.to(gameRoomList[i].host).emit('getStatus', playerid)
       }
     }
     startGameWhenReady(focus)
   });
 
+  socket.on('sendStatus', data => {
+    io.to(data.to).emit('updateStatus', data.message)
+  })
 
   function startGameWhenReady(roomid) {
     for (let i = 0; i < gameRoomList.length; i++) {
       if (gameRoomList[i].gameroomid == roomid) {
-        console.log("Game Room size: " + gameRoomList[i].playerlist.length)
-        if (gameRoomList[i].playerlist.length >= 2) {
+        if (gameRoomList[i].playerlist.length >= 2 && gameRoomList[i].host == null) {
           findNewHost({ roomid: roomid, id: null })
         }
       }
     }
   }
-
-
 
   socket.on('send_updateStatus', data => {
     if (data.broadcast)
@@ -194,11 +193,12 @@ io.on('connection', socket => {
       for (let i = 0; i < gameRoomList.length; i++) {
         if (gameRoomList[i].gameroomid == focus) {
           let index = gameRoomList[i].playerlist.indexOf(playerid)
-          console.log("Index: " + index)
-          console.log(gameRoomList[i].playerlist.length)
           gameRoomList[i].playerlist.splice(index, 1);
-          console.log(gameRoomList[i].playerlist.length)
-          if (gameRoomList[i].playerlist.length <= 1 || gameRoomList[i].host == playerid) {
+          if (gameRoomList[i].host == playerid) {
+            gameRoomList[i].host = null
+            startGameWhenReady(focus)
+          }
+          if (gameRoomList[i].playerlist.length <= 1) {
             io.to(focus).emit('endgame')
           }
         }
@@ -206,14 +206,14 @@ io.on('connection', socket => {
     }
   })
 
-  socket.on('joinRoom', roomid => {
-    for (let i = 0; i < gameRoomList.length; i++) {
-      if (gameRoomList[i].gameroomid == roomid) {
-        //gameRoomList[i].playerlist.push(playerid);
-        console.log("number of players: " + gameRoomList[i].playerlist.length);
-      }
-    }
-  });
+  // socket.on('joinRoom', roomid => {
+  //   for (let i = 0; i < gameRoomList.length; i++) {
+  //     if (gameRoomList[i].gameroomid == roomid) {
+  //       //gameRoomList[i].playerlist.push(playerid);
+  //       console.log("number of players: " + gameRoomList[i].playerlist.length);
+  //     }
+  //   }
+  // });
 
   socket.on('chat message', msg => {
     console.log('message: ' + msg);
@@ -227,8 +227,7 @@ io.on('connection', socket => {
       gameroomid: roomid,
       gameroomname: roomname,
       playerlist: [],
-      host: null,
-      gamestarted: false
+      host: null
     }
     gameRoomList.push(package);
 
