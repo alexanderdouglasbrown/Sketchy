@@ -128,19 +128,50 @@ io.on('connection', socket => {
     socket.join(data.roomid);
     socket.join(playerid);
     socket.broadcast.to(focus).emit('resync')
+
+    for (let i = 0; i < gameRoomList.length; i++) {
+      if (gameRoomList[i].gameroomid == focus) {
+        if (gameRoomList[i].host == null && gameRoomList[i].playerlist.length >= 2) {
+          gameRoomList[i].host = gameRoomList[i].playerlist[0]
+          io.to(gameRoomList[i].host).emit('youarehost')
+          gameRoomList[i].gamestarted = true
+        }
+      }
+    }
   });
+
+  socket.on('send_updateStatus', data => {
+    if (data.broadcast)
+      socket.broadcast.to(data.roomid).emit('updateStatus', data.message)
+    else
+      io.to(data.roomid).emit('updateStatus', data.message)
+  })
+
+  socket.on('send_updateTimer', data => {
+    io.to(data.roomid).emit('updateTimer', data.message)
+  })
+
+  socket.on('send_setReadOnly', data => {
+    socket.broadcast.to(data.roomid).emit('setReadOnly')
+  })
 
   //  }
   socket.on('disconnect', data => {
     console.log('client disconnected');
 
-    console.log("Player id : " + playerid);
+    console.log("Player id disconnected: " + playerid);
     console.log(focus);
     if (inGame) {
       for (let i = 0; i < gameRoomList.length; i++) {
         if (gameRoomList[i].gameroomid == focus) {
           let index = gameRoomList[i].playerlist.indexOf(playerid)
           gameRoomList[i].playerlist.splice(index, 1);
+          if (gameRoomList[i].playerlist.length <= 1 || gameRoomList[i].host == playerid) {
+            console.log("Force game end")
+            io.to(focus).emit('endgame')
+            gameRoomList[i].gamestarted = false
+            gameRoomList[i].host = null
+          }
         }
       };
     }
@@ -157,7 +188,7 @@ io.on('connection', socket => {
 
   socket.on('chat message', msg => {
     console.log('message: ' + msg);
-     console.log('focus: ' + focus);
+    console.log('focus: ' + focus);
     io.to(focus).emit('chat message', msg);
   });
 
@@ -166,7 +197,9 @@ io.on('connection', socket => {
     const package = {
       gameroomid: roomid,
       gameroomname: roomname,
-      playerlist: []
+      playerlist: [],
+      host: null,
+      gamestarted: false
     }
     package.playerlist.push(playerid);
     gameRoomList.push(package);
@@ -204,3 +237,9 @@ function initializeSocket(socket) {
     */
 }
 
+//From Mozilla Docs
+function getRandomInt(min, max) {
+  min = Math.ceil(min)
+  max = Math.floor(max)
+  return Math.floor(Math.random() * (max - min)) + min
+}

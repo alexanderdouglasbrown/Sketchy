@@ -27,10 +27,15 @@ navbar{
 }
 
 #statusBar p, #topBar p{
-  font-size: 28pt;
+  font-size: 16pt;
+  margin-bottom: -5px;
 }
 
-#statusBar span{
+/*#timer{
+  color: blue;
+}*/
+
+#status span{
   color: red;
 }
 

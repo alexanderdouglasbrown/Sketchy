@@ -14,8 +14,8 @@ block content
         script.
           const player = '#{player}'
       #statusBar
-        p 1:00 - Draw
-          span  CAT
+        p#status Waiting on other players...
+        p#timer
       canvas#artpadCanvas
       br
       #toolbar
@@ -31,11 +31,12 @@ block content
         img(src="/images/artpad/undo.png")#undo
         img(src="/images/artpad/skip.png")#skip
 
-    hr
-    h1#readOnlyh1 Read Only is ON
-    button#readOnlyButton Toggle Read-Only
+    //- hr
+    //- h1#readOnlyh1 Read Only is ON
+    //- button#readOnlyButton Toggle Read-Only
     
   script.
+    const playerid = "#{id}"
     const roomid = "#{roomid}"
     window.onload = () => {
       socket.emit('loadGame', {roomid : roomid, id : "#{id}"});

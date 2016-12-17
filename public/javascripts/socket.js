@@ -81,7 +81,7 @@ function getTimestamp() {
       () => {
       minutes = currentTime.getUTCMinutes()
       if( minutes < 10 ) 
-        minute = '0' + miuntes
+        minute = '0' + minutes
       return minutes
     } 
   )()
