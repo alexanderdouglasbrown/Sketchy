@@ -7,7 +7,7 @@ block content
         p Welcome, #{player}
       .col-md-7.col-sm-12#gamerooms
         .col-xs-12#rooms
-          ul.activegames
+          ul.activegames.list-group
         form.input-group.inputBoxes(action = " ", data-toggle='modal', data-target='popup')
           input.form-control(type="text")
           .modal.fade(tabindex='-1', role='dialog', arai-labelledby='popupLabel', aria-hidden='true')#popup
@@ -21,7 +21,7 @@ block content
             button.btn.btn-default#creategamebutton Create Room
       .col-md-5.col-sm-12#messages
         .col-xs-12#chat
-          ul.messages
+          ul.messages.list-group
         form.input-group.inputBoxes(action=" ")
           input.form-control(type="text",rows="1", autocomplete = "off", data-toggle='modal', data-target='popup')#chatTextArea
           .modal.fade(tabindex='-1', role='dialog', arai-labelledby='popupLabel', aria-hidden='true')#popup
