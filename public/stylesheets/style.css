@@ -1,6 +1,9 @@
+
+
 body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   padding-bottom: 50px;
+  background-image :url('/images/background.png') !important;
 }
 
 a {
@@ -9,6 +12,31 @@ a {
 
 navbar{
   margin-bottom:-30px;
+}
+#logo {
+  /*margin-right : 5vw; */
+}
+
+#menu {
+  background-color: rgba(0,0,0,0.5);
+  font-weight: bold;
+  padding-bottom: 20px;
+  padding-top : 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+  height: 80px;
+  width: 100%;
+  border-radius : 10px;
+  margin-left:20px;
+  display: flex;
+
+  
+}
+#menu a {
+  min-height : 40px;
+  min-width : 100%;
+  font-size : 16px;
+  margin-left : 10px; 
 }
 
 #statusBar, #topBar{
@@ -27,10 +55,15 @@ navbar{
 }
 
 #statusBar p, #topBar p{
-  font-size: 28pt;
+  font-size: 16pt;
+  margin-bottom: -5px;
 }
 
-#statusBar span{
+/*#timer{
+  color: blue;
+}*/
+
+#status span{
   color: red;
 }
 
@@ -48,15 +81,16 @@ navbar{
 
 #chat ul, #rooms ul{
   -webkit-padding-start: 0;
+  padding-left: 10px;
+  padding-top : 10px;
 }
 
 #rooms ul li a{
   cursor: pointer;
 }
 
-#chat, #rooms{
-  background-color: lightgray;
-  border-radius: 5px;
+#chat .list-group, #rooms .list-group{
+  background-color: rgba(0,0,0,0.5);
   font-weight: bold;
   padding-bottom: 5px;
   height: 65vh;
@@ -64,10 +98,28 @@ navbar{
   overflow: scroll;
   max-height:100%;
   overflow-x:hidden;
+  border-radius: 10px
+}
+  
+#chat .list-group-item{
+  list-style-type: none;
+  margin-bottom : 5px !important ;
+  padding-left : 10px;
+  border-radius: 5px;
+  border:none;
 }
 
-#chat li, #rooms li{
+#rooms li .list-group-item{
   list-style-type: none;
+  margin : 5px;
+  border: none;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  min-height : 80px;
+  font-size : 36px;
+  padding-left:10px;
   padding-top: 2px;
   padding-bottom: 2px;
 }
@@ -93,12 +145,14 @@ textarea{
   margin-left: 30px;
   padding-left: 2px;
   padding-right: 2px;
+  padding-top : 4px;
+  padding-bottom : 4px !important;
   display: flex;
   justify-content: space-around;
   border-radius: 5px;
   width: 500px;
-  height: 48px;
-  background: lightgray;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
   visibility: hidden;
 }
 #toolbar img{

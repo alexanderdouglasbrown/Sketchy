@@ -347,14 +347,6 @@ function clearHighlights() {
     $('#eraser').attr('src', '/images/artpad/eraser.png')
 }
 
-$('#readOnlyButton').click(() => {name
-    if (artpad.readOnly) {
-        toggleReadOnly(false)
-    } else {
-        toggleReadOnly(true)
-    }
-})
-
 function toggleReadOnly(readOnly) {
     artpad.history = []
     artpad.lastChange = []
@@ -365,16 +357,14 @@ function toggleReadOnly(readOnly) {
     artpad.clearWasPressed = false
     artpad.context.beginPath()
 
-    if (artpad.readOnly) {
+    if (!readOnly) {
         artpad.readOnly = false
         clearScreen()
         sendClearScreen()
-        $('#readOnlyh1').text("Read Only is OFF")
         $('#toolbar').css('visibility', 'visible')
         setBrush("black")
     } else {
         artpad.readOnly = true
-        $('#readOnlyh1').text("Read Only is ON")
         $('#toolbar').css('visibility', 'hidden')
         setBrush("black")
         $('#artpadCanvas').css('cursor', 'auto')

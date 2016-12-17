@@ -7,16 +7,30 @@ block content
         p Welcome, #{player}
       .col-md-7.col-sm-12#gamerooms
         .col-xs-12#rooms
-          ul.activegames
-        form.input-group.inputBoxes(action = " ")
+          ul.activegames.list-group
+        form.input-group.inputBoxes(action = " ", data-toggle='modal', data-target='popup')
           input.form-control(type="text")
+          .modal.fade(tabindex='-1', role='dialog', arai-labelledby='popupLabel', aria-hidden='true')#popup
+            .modal-dialog.modal-sm(role='document')
+              .modal-content
+                .modal-body
+                  p Please sign in create a room.
+                .modal-footer
+                  button.btn.btn-secondary(type='button', data-dismiss='modal') Close
           span.input-group-btn
             button.btn.btn-default#creategamebutton Create Room
       .col-md-5.col-sm-12#messages
         .col-xs-12#chat
-          ul.messages
+          ul.messages.list-group
         form.input-group.inputBoxes(action=" ")
-          input.form-control(type="text",rows="1", autocomplete = "off")#chatTextArea
+          input.form-control(type="text",rows="1", autocomplete = "off", data-toggle='modal', data-target='popup')#chatTextArea
+          .modal.fade(tabindex='-1', role='dialog', arai-labelledby='popupLabel', aria-hidden='true')#popup
+            .modal-dialog.modal-sm(role='document')
+              .modal-content
+                .modal-body
+                  p Please sign in to chat.
+                .modal-footer
+                  button.btn.btn-secondary(type='button', data-dismiss='modal') Close
           span.input-group-btn
             button.btn.btn-default(type = "submit")#submit Submit
         script.
