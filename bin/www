@@ -128,17 +128,27 @@ io.on('connection', socket => {
     socket.join(data.roomid);
     socket.join(playerid);
     socket.broadcast.to(focus).emit('resync')
-
     for (let i = 0; i < gameRoomList.length; i++) {
-      if (gameRoomList[i].gameroomid == focus) {
-        if (gameRoomList[i].host == null && gameRoomList[i].playerlist.length >= 2) {
-          gameRoomList[i].host = gameRoomList[i].playerlist[0]
-          io.to(gameRoomList[i].host).emit('youarehost')
-          gameRoomList[i].gamestarted = true
+      if (gameRoomList[i].gameroomid == data.roomid) {
+        gameRoomList[i].playerlist.push(playerid);
+      }
+    }
+    startGameWhenReady(focus)
+  });
+
+
+  function startGameWhenReady(roomid) {
+    for (let i = 0; i < gameRoomList.length; i++) {
+      if (gameRoomList[i].gameroomid == roomid) {
+        console.log("Game Room size: " + gameRoomList[i].playerlist.length)
+        if (gameRoomList[i].playerlist.length >= 2) {
+          findNewHost({ roomid: roomid, id: null })
         }
       }
     }
-  });
+  }
+
+
 
   socket.on('send_updateStatus', data => {
     if (data.broadcast)
@@ -155,7 +165,26 @@ io.on('connection', socket => {
     socket.broadcast.to(data.roomid).emit('setReadOnly')
   })
 
-  //  }
+  socket.on('findANewHost', data => {
+    findNewHost(data)
+  })
+
+  function findNewHost(data) {
+    temp_playerlist = []
+    for (let i = 0; i < gameRoomList.length; i++) {
+      if (gameRoomList[i].gameroomid == data.roomid) {
+        for (let j = 0; j < gameRoomList[i].playerlist.length; j++) {
+          if (gameRoomList[i].playerlist[j] != gameRoomList[i].host) {
+            temp_playerlist.push(gameRoomList[i].playerlist[j])
+          }
+        }
+        gameRoomList[i].host = temp_playerlist[getRandomInt(0, temp_playerlist.length)]
+        io.to(data.roomid).emit('youarenothost')
+        io.to(gameRoomList[i].host).emit('youarehost')
+      }
+    }
+  }
+
   socket.on('disconnect', data => {
     console.log('client disconnected');
 
@@ -165,22 +194,22 @@ io.on('connection', socket => {
       for (let i = 0; i < gameRoomList.length; i++) {
         if (gameRoomList[i].gameroomid == focus) {
           let index = gameRoomList[i].playerlist.indexOf(playerid)
+          console.log("Index: " + index)
+          console.log(gameRoomList[i].playerlist.length)
           gameRoomList[i].playerlist.splice(index, 1);
+          console.log(gameRoomList[i].playerlist.length)
           if (gameRoomList[i].playerlist.length <= 1 || gameRoomList[i].host == playerid) {
-            console.log("Force game end")
             io.to(focus).emit('endgame')
-            gameRoomList[i].gamestarted = false
-            gameRoomList[i].host = null
           }
         }
-      };
+      }
     }
   })
 
   socket.on('joinRoom', roomid => {
     for (let i = 0; i < gameRoomList.length; i++) {
       if (gameRoomList[i].gameroomid == roomid) {
-        gameRoomList[i].playerlist.push(playerid);
+        //gameRoomList[i].playerlist.push(playerid);
         console.log("number of players: " + gameRoomList[i].playerlist.length);
       }
     }
@@ -201,10 +230,9 @@ io.on('connection', socket => {
       host: null,
       gamestarted: false
     }
-    package.playerlist.push(playerid);
     gameRoomList.push(package);
-    io.to(LOBBY).emit('newgame', package);
 
+    io.to(LOBBY).emit('newgame', package);
     io.to(playerid).emit('enterRoom', roomid);
   });
 

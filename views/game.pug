@@ -30,17 +30,14 @@ block content
         img(src="/images/artpad/clear.png")#clear
         img(src="/images/artpad/undo.png")#undo
         img(src="/images/artpad/skip.png")#skip
-
-    //- hr
-    //- h1#readOnlyh1 Read Only is ON
-    //- button#readOnlyButton Toggle Read-Only
     
   script.
     const playerid = "#{id}"
     const roomid = "#{roomid}"
     window.onload = () => {
       socket.emit('loadGame', {roomid : roomid, id : "#{id}"});
+      console.log(socket.handshake.sessionid)
     }
   script(src="/javascripts/artpad.js")
-  script(src='/javascripts/socket.js')
   script(src='/javascripts/game.js')
+  script(src='/javascripts/socket.js')
