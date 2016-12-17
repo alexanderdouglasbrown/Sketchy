@@ -6,11 +6,16 @@
 $(document).ready(function () {
 
   $('#messages form').submit(function () {
-    const val = $('#messages input').val();
-    if (val.length > 0) {
-      socket.emit('chat message', getTimestamp() + ' ' + player + ' ' + val);
-      $('#messages input').val('');
+    if(player === '') {
+      $('#popup').modal('show');
+      $('#messages input').val('')
+    } else {
+      const val = $('#messages input').val();
+      if (val.length > 0) {
+        socket.emit('chat message', getTimestamp() + ' ' + player + ' ' + val);
+        $('#messages input').val('');
 
+      }
     }
     return false;
   });
@@ -45,12 +50,16 @@ $(document).ready(function () {
   });
 
   $('#gamerooms form').submit(event => {
-    const roomname = $('#gamerooms input').val();
-    if (roomname.length > 0) {
-      socket.emit('createroom', roomname);
+    if(player === '') {
+      $('#popup').modal('show');
+      $('#messages input').val('')
+    } else {
+      const roomname = $('#gamerooms input').val();
+      if (roomname.length > 0) {
+        socket.emit('createroom', roomname);
 
-      $('#gamerooms input').val('');
-
+        $('#gamerooms input').val('');
+      }
       //console.log('its working' );
       //socket.emit('returnToLobby', true );
     }
