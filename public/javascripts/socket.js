@@ -2,6 +2,7 @@
 
 // const socket = io();
 //const UUID = require('../UUID/v4');
+let gameroomcounter = 0;
 
 $(document).ready(function () {
 
@@ -16,7 +17,7 @@ $(document).ready(function () {
   });
 
   socket.on('chat message', msg => {
-    $('.messages').append('<li class = "message"> ' + msg + '</li>');
+    $('.messages').append('<li class = "message list-group-item"> ' + msg + '</li>');
     $('#chat').scrollTop($('#chat').prop('scrollHeight'))
   });
 
@@ -41,7 +42,38 @@ $(document).ready(function () {
   })
 
   socket.on('newgame', data => {
-    $('.activegames').prepend('<li><a class = "games list-group-item default" id = "' + data.gameroomid + '" > ' + data.gameroomname + '</a></li>');
+    gameroomcounter++;
+    let roomcolor;
+    let roomimg;
+
+    switch(gameroomcounter%6){
+      case 0 : 
+        roomcolor = "#ffffd9"
+        roomimg = "/images/sun.png"
+        break
+      case 1 : 
+        roomcolor = "#ffd9d9"
+        roomimg = "/images/car.png"
+        break
+      case 2 : 
+        roomcolor = "#d9f4ff"
+        roomimg = "/images/bird.png"
+        break
+      case 3 : 
+        roomcolor = "#f4fff4"
+        roomimg = "/images/tree.png"
+        break
+      case 4 : 
+        roomcolor = "#f4d9ff"
+        roomimg ="/images/moon.png"
+        break
+      case 5 : 
+        roomcolor = "#fff4ff"
+        roomimg = "/images/bunny.png"
+        break
+    }
+
+    $('.activegames').prepend('<li><a class = "games list-group-item default" style = "background-color: ' + roomcolor + '" id = "' + data.gameroomid + '" > <img src=" ' + roomimg + ' "> ' + data.gameroomname + '</a></li>');
   });
 
   $('#gamerooms form').submit(event => {
@@ -81,7 +113,7 @@ function getTimestamp() {
       () => {
       minutes = currentTime.getUTCMinutes()
       if( minutes < 10 ) 
-        minute = '0' + miuntes
+        minute = '0' + minutes
       return minutes
     } 
   )()

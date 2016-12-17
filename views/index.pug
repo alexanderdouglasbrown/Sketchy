@@ -7,14 +7,14 @@ block content
         p Welcome, #{player}
       .col-md-7.col-sm-12#gamerooms
         .col-xs-12#rooms
-          ul.activegames
+          ul.activegames.list-group
         form.input-group.inputBoxes(action = " ")
           input.form-control(type="text")
           span.input-group-btn
             button.btn.btn-default#creategamebutton Create Room
       .col-md-5.col-sm-12#messages
         .col-xs-12#chat
-          ul.messages
+          ul.messages.list-group
         form.input-group.inputBoxes(action=" ")
           input.form-control(type="text",rows="1", autocomplete = "off")#chatTextArea
           span.input-group-btn
