@@ -1,12 +1,12 @@
-var promise = require('bluebird');
+let promise = require('bluebird');
 
-var options = {
+let options = {
     promiseLib: promise
 };
 
-var pgp = require('pg-promise')(options);
-var connectionString = 'postgres://localhost:5432/Brian';
-var db = pgp(connectionString);
+let pgp = require('pg-promise')(options);
+let connectionString = 'postgres://localhost:5432/Brian';
+let db = pgp(connectionString);
 
 module.exports = {
     getWord: getWord
