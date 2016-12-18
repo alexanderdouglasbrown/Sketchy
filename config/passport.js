@@ -18,9 +18,9 @@ module.exports = function( passport ) {
   })
 
   passport.use( new GoogleStrategy( {
-    clientID: configAuth.googleAuth.client_id,
-    clientSecret: configAuth.googleAuth.client_secret,
-    callbackURL: configAuth.googleAuth.callback_url
+    clientID: process.env.GAPI_CLIENT_ID,
+    clientSecret: process.env.GAPI_CLIENT_SECRET,
+    callbackURL: process.env.GAPI_CALLBACK_URL
   },
   
   function( token, refreshToken, profile, done ) {

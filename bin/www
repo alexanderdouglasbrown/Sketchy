@@ -89,7 +89,6 @@ function onError(error) {
 /**
  * Event listener for HTTP server "listening" event.
  */
-http://localhost:3000/chat
 function onListening() {
   var addr = server.address();
   var bind = typeof addr === 'string'
