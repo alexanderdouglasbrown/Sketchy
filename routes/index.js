@@ -10,7 +10,7 @@ router.get('/', function (req, res, next) {
   setSession(req.session);
   req.session.roomId = ' ';
   req.session.inGame = false;
-  res.render('index', { title: 'Sketchy', username: req.session.username, id: req.session.id, player: req.user });
+  res.render('index', { title: 'Sketchy', username: req.session.username, id: req.session.id, player: ''});
 });
 /*
 router.get('/game', function(req, res, next) {
@@ -28,7 +28,7 @@ router.get('/game/:id', function (req, res, next) {
   setSession(req.session)
   req.session.roomId = req.params.id
   req.session.inGame = true;
-  res.render('game', { title: 'Sketchy', roomid: req.params.id, id: req.session.id, player : req.user  })
+  res.render('game', { title: 'Sketchy', roomid: req.params.id, id: req.session.id, player : req.user.displayName  })
   //res.send( 'Your game is ' + req.params.id )
 });
 
@@ -51,7 +51,7 @@ router.get( '/auth',
 
 router.get( '/auth/callback', 
   passport.authenticate( 'google', {
-    successRedirect: '/',
+    successRedirect: '/dashboard',
     failureRedirect: '/'
   })
 )
@@ -61,8 +61,8 @@ router.get( '/logout', function( request, response ) {
   response.redirect('/')
 })
 
-router.get( '/profile', isLoggedIn, function ( request, response ) {
-  response.render('profile')
+router.get( '/dashboard', isLoggedIn, function ( req, res ) {
+  res.render('index', { title: 'Sketchy', username: req.session.username, id: req.session.id, player: req.user.displayName});
 })
 
 function isLoggedIn(req, res, next) {

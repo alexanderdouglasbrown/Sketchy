@@ -4,10 +4,17 @@ block content
   main.container
     .row
       .col-xs-12#topBar
-        p Welcome, #{player}
+        p Welcome #{player}
       .col-md-7.col-sm-12#gamerooms
         .col-xs-12#rooms
           ul.activegames.list-group
+          .modal.fade(tabindex='-1', role='dialog', arai-labelledby='popupLabel', aria-hidden='true')#roomPopup
+            .modal-dialog.modal-sm(role='document')
+              .modal-content
+                .modal-body
+                  p Please sign in to enter a room.
+                .modal-footer
+                  button.btn.btn-secondary(type='button', data-dismiss='modal') Close
         form.input-group.inputBoxes(action = " ", data-toggle='modal', data-target='popup')
           input.form-control(type="text")
           .modal.fade(tabindex='-1', role='dialog', arai-labelledby='popupLabel', aria-hidden='true')#popup
