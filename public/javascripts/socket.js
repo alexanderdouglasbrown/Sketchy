@@ -26,8 +26,17 @@ $(document).ready(function () {
     $('#chat').scrollTop($('#chat').prop('scrollHeight'))
   });
 
+  socket.on('enableRoom', id => {
+    $('#' + id).style.pointerEvents = 'auto';
 
-  socket.on('playerDelete', id => {
+  });
+
+  socket.on('disableRoom', id => {
+    $('#' + id).style.pointerEvents = 'none';
+
+  });
+
+  socket.on('deleteRoom', id => {
     $('#' + id).remove();
 
   });

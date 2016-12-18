@@ -21,6 +21,7 @@ app.set('port', port);
 
 //some temporary chat variables
 const LOBBY = 'lobby-chat';
+const LIMIT = 2;
 const PLAYERLIST = 'player-list';
 
 
@@ -38,7 +39,7 @@ server.on('listening', onListening);
 
 // socket functionality 
 
-/**
+/**socket
  * Normalize a port into a number, string, or false.
  */
 
@@ -89,7 +90,6 @@ function onError(error) {
 /**
  * Event listener for HTTP server "listening" event.
  */
-http://localhost:3000/chat
 function onListening() {
   var addr = server.address();
   var bind = typeof addr === 'string'
@@ -129,6 +129,11 @@ io.on('connection', socket => {
     for (let i = 0; i < gameRoomList.length; i++) {
       if (gameRoomList[i].gameroomid == data.roomid) {
         gameRoomList[i].playerlist.push(playerid)
+        
+        if (gameRoomList[i].playerlist.length >= LIMIT ){
+          console.log("disableing room ")
+        //  io.to(LOBBY).emit("diableRoom", data.roomid)
+        }
         io.to(gameRoomList[i].host).emit('getStatus', playerid)
       }
     }
@@ -198,8 +203,16 @@ io.on('connection', socket => {
             gameRoomList[i].host = null
             startGameWhenReady(focus)
           }
-          if (gameRoomList[i].playerlist.length <= 1) {
+
+          if (gameRoomList[i].playerlist.length < LIMIT && gameRoomList[i].playerlist.length > 1) {
+      //      io.to(LOBBY).emit('enableRoom', focus)
+          }
+          if (gameRoomList[i].playerlist.length == 1) {
             io.to(focus).emit('endgame')
+          }
+          if (gameRoomList[i].playerlist.length < 1) {
+            gameRoomList.splice(i , 1);
+            io.to(LOBBY).emit('deleteRoom', focus)
           }
         }
       }

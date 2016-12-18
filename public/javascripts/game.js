@@ -122,5 +122,8 @@ wordlist = [
     "Dollar",
     "Soda",
     "TV",
-    "Owl"
+    "Owl",
+    "Sketchy",
+    "Tweeter",
+    "Usagi"
 ]
