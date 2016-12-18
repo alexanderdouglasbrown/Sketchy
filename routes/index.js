@@ -7,10 +7,15 @@ let random;
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-  setSession(req.session);
+  setSession(req);
   req.session.roomId = ' ';
   req.session.inGame = false;
-  res.render('index', { title: 'Sketchy', username: req.session.username, id: req.session.id, player: req.user });
+  let playerInfo
+  if(req.user == undefined)
+    playerInfo = ''
+  else
+    playerInfo = {id: req.user.id, email: req.user.displayName}
+  res.render('index', { title: 'Sketchy', username: req.session.username, id: req.session.id, player: playerInfo});
 });
 /*
 router.get('/game', function(req, res, next) {
@@ -18,28 +23,29 @@ router.get('/game', function(req, res, next) {
 });
 */
 
-// router.get('/chat', function(req, res, next) {
-//   setSession(req.session);
-//   res.render('chat', { title: 'Chat Sample' }); 
-//   res.send({hi : 'hello'}) 
-// });
-
 router.get('/game/:id', function (req, res, next) {
-  setSession(req.session)
+  setSession(req)
   req.session.roomId = req.params.id
   req.session.inGame = true;
-  res.render('game', { title: 'Sketchy', roomid: req.params.id, id: req.session.id, player : req.user  })
+  res.render('game', { title: 'Sketchy', roomid: req.params.id, id: req.session.id, player : req.user.displayName  })
   //res.send( 'Your game is ' + req.params.id )
 });
 
-function setSession(session) {
+function setSession(req) {
   random = Math.floor((Math.random() * 10000) + 1)
-  if (!session.isSet) {
-    session.isSet = true
-    session.id = UUID();
-    session.username = 'Anon' + random
-    session.inGame = false
-    session.roomId = ' '
+  if (!req.session.isSet) {
+    req.session.isSet = true
+    req.session.id = UUID();
+    req.session.inGame = false
+    req.session.roomId = ' '
+  }
+  if (req.user) {
+    const email = req.user.displayName
+    let splitname = email.split('@')
+    req.session.username = splitname[0]
+  }
+  else {
+    req.session.username = 'Anon' + random
   }
 }
 
@@ -61,8 +67,8 @@ router.get( '/logout', function( request, response ) {
   response.redirect('/')
 })
 
-router.get( '/profile', isLoggedIn, function ( request, response ) {
-  response.render('profile')
+router.get( '/dashboard', isLoggedIn, function ( req, res ) {
+  res.render('index', { title: 'Sketchy', username: req.session.username, id: req.session.id, player: req.user.displayName});
 })
 
 function isLoggedIn(req, res, next) {
