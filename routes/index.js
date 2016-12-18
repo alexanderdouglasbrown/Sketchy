@@ -41,7 +41,7 @@ function setSession(req) {
   }
   if (req.user) {
     const email = req.user.displayName
-    let splitname = email.split('@')
+    let splitname = email.split(' ')
     req.session.username = splitname[0]
   }
   else {
