@@ -45,7 +45,7 @@ function setSession(req) {
     req.session.username = splitname[0]
   }
   else {
-    req.session.username = 'Anon' + random
+    req.session.username = "- please sign in"
   }
 }
 
