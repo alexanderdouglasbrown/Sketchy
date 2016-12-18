@@ -47,8 +47,8 @@ socket.on('setReadOnly', () => {
 })
 
 socket.on('youarehost', (package) => {
-    game.statusMessage = "Game is about to begin"
-    socket.emit('send_updateStatus', { message: game.statusMessage, roomid: roomid, broadcast: true })
+    game.statusMessage = username + " is up. Game is about to begin"
+    socket.emit('send_updateStatus', { message: game.statusMessage, roomid: roomid, host: username })
     $('#status').html("You're up next")
     game.timeRemaining = game.waitLength
     game.timerInterval = setInterval(iterateCountDown, 1000)
@@ -74,7 +74,7 @@ function startGame() {
     game.gameStarted = true
     socket.emit('send_setReadOnly', roomid)
     game.statusMessage = "Guess the word in the chat room"
-    socket.emit('send_updateStatus', { message: game.statusMessage, roomid: roomid, broadcast: true })
+    socket.emit('send_updateStatus', { message: game.statusMessage, roomid: roomid, host: username })
 
     game.timeRemaining = game.gameLength
     toggleReadOnly(false)
