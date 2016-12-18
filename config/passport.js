@@ -2,8 +2,9 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
 
 //var configAuth = require('./authentication')
 
-var Player = function(id, displayName) {
-  this.id = id;
+var Player = function(id, email, displayName) {
+  this.id = id
+  this.email = email
   this.displayName = displayName
 }
 
@@ -25,7 +26,7 @@ module.exports = function( passport ) {
   
   function( token, refreshToken, profile, done ) {
     process.nextTick( function() {
-      var player = new Player(profile.id, profile.emails[0].value)
+      var player = new Player(profile.id, profile.emails[0].value, profile.displayName)
       console.log(player)
       return done(null, player)
     })
