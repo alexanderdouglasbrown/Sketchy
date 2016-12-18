@@ -16,7 +16,7 @@ block content
                 .modal-footer
                   button.btn.btn-secondary(type='button', data-dismiss='modal') Close
         form.input-group.inputBoxes(action = " ", data-toggle='modal', data-target='popup')
-          input.form-control(type="text")
+          input.form-control(type="text" maxlength = "25")
           .modal.fade(tabindex='-1', role='dialog', arai-labelledby='popupLabel', aria-hidden='true')#gameRoomPopup
             .modal-dialog.modal-sm(role='document')
               .modal-content
