@@ -32,6 +32,11 @@ block content
         img(src="/images/artpad/skip.png")#skip
     
   script.
+    $(document).ready( () => {
+      $('#instructionsButton').click( () => {
+        $('#instructionsPopup').modal()
+      })
+    })
     const playerid = "#{id}"
     const roomid = "#{roomid}"
     const username = "#{username}"
