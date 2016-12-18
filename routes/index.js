@@ -10,7 +10,12 @@ router.get('/', function (req, res, next) {
   setSession(req.session);
   req.session.roomId = ' ';
   req.session.inGame = false;
-  res.render('index', { title: 'Sketchy', username: req.session.username, id: req.session.id, player: ''});
+  let playerInfo
+  if(req.user == undefined)
+    playerInfo = ''
+  else
+    playerInfo = {id: req.user.id, email: req.user.displayName}
+  res.render('index', { title: 'Sketchy', username: req.session.username, id: req.session.id, player: playerInfo});
 });
 /*
 router.get('/game', function(req, res, next) {
@@ -51,7 +56,7 @@ router.get( '/auth',
 
 router.get( '/auth/callback', 
   passport.authenticate( 'google', {
-    successRedirect: '/dashboard',
+    successRedirect: '/',
     failureRedirect: '/'
   })
 )
