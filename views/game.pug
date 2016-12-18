@@ -34,6 +34,7 @@ block content
   script.
     const playerid = "#{id}"
     const roomid = "#{roomid}"
+    const username = "#{username}"
     window.onload = () => {
       socket.emit('loadGame', {roomid : roomid, id : "#{id}"});
     }

@@ -131,7 +131,7 @@ io.on('connection', socket => {
         gameRoomList[i].playerlist.push(playerid)
 
         if (gameRoomList[i].playerlist.length >= LIMIT) {
-          console.log("disableing room ")
+          console.log("disabling room ")
           //  io.to(LOBBY).emit("diableRoom", data.roomid)
         }
         io.to(gameRoomList[i].host).emit('getStatus', playerid)
@@ -236,7 +236,7 @@ io.on('connection', socket => {
   socket.on('chat message', data => {
     // console.log('message: ' + msg);
     // console.log('focus: ' + focus);
-    const username = data.player.split("@")[0]
+    const username = data.player
     let scoreindex = 0
 
     for (let i = 0; i < gameRoomList.length; i++) {
@@ -256,8 +256,8 @@ io.on('connection', socket => {
         io.to(focus).emit('consoleOut', scoreindex)
         io.to(focus).emit('chat message', username + "(" + gameRoomList[i].scorelist[scoreindex].score + "): " + data.message)
         if (data.message.toLowerCase().includes(gameRoomList[i].word) && gameRoomList[i].host != data.playerid) {
-          io.to(focus).emit('chat message', username + "(" + gameRoomList[i].scorelist[scoreindex].score + ") guessed the word!: " + gameRoomList[i].word)
           gameRoomList[i].scorelist[scoreindex].score++
+          io.to(focus).emit('chat message', username + "(" + gameRoomList[i].scorelist[scoreindex].score + ") guessed the word!: " + gameRoomList[i].word)
           getWord(focus)
         }
         return

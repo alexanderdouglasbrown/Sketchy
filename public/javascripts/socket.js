@@ -7,23 +7,13 @@ let gameroomcounter = 0;
 $(document).ready(function () {
 
   $('#messages form').submit(function () {
-<<<<<<< HEAD
     if (player === '') {
-      $('#popup').modal('show');
-=======
-    if(player === '') {
       $('#chatPopup').modal('show');
->>>>>>> ed0abe07d6d2ad0b0e0554d742c8908752024656
       $('#messages input').val('')
     } else {
       const val = $('#messages input').val();
       if (val.length > 0) {
-<<<<<<< HEAD
-        //socket.emit('chat message', getTimestamp() + ' ' + player + ' ' + val);
-        socket.emit('chat message', { message: val, player: player, playerid: playerid });
-=======
-        socket.emit('chat message', getTimestamp() + ' '  + username + ' ' + val);
->>>>>>> ed0abe07d6d2ad0b0e0554d742c8908752024656
+        socket.emit('chat message', { message: val, player: username, playerid: playerid });
         $('#messages input').val('');
 
       }
@@ -54,7 +44,7 @@ $(document).ready(function () {
   $('#rooms').click(event => {
     //console.log(event.target.id);
     if (event.target.id != "rooms" && event.target.id != "") {
-      if(player === '') {
+      if (player === '') {
         $('#roomPopup').modal('show');
       } else {
         window.location = '/game/' + event.target.id
@@ -105,7 +95,7 @@ $(document).ready(function () {
   });
 
   $('#gamerooms form').submit(event => {
-    if(player === '') {
+    if (player === '') {
       $('#gameRoomPopup').modal('show');
       $('#messages input').val('')
     } else {
@@ -144,13 +134,8 @@ function getTimestamp() {
   var currentMinutes = (
     () => {
       minutes = currentTime.getUTCMinutes()
-<<<<<<< HEAD
       if (minutes < 10)
-        minute = '0' + minutes
-=======
-      if( minutes < 10 ) 
         minutes = '0' + minutes
->>>>>>> ed0abe07d6d2ad0b0e0554d742c8908752024656
       return minutes
     }
   )()
