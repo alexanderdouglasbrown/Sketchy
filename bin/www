@@ -115,6 +115,7 @@ io.on('connection', socket => {
     for (let i = 0; i < gameRoomList.length; i++) {
       console.log(gameRoomList[i].gameroomname);
       io.to(playerid).emit('newgame', gameRoomList[i]);
+      return
     };
   });
 
@@ -135,6 +136,7 @@ io.on('connection', socket => {
           //  io.to(LOBBY).emit("diableRoom", data.roomid)
         }
         io.to(gameRoomList[i].host).emit('getStatus', playerid)
+        break
       }
     }
     startGameWhenReady(focus)
@@ -149,16 +151,20 @@ io.on('connection', socket => {
       if (gameRoomList[i].gameroomid == roomid) {
         if (gameRoomList[i].playerlist.length >= 2 && gameRoomList[i].host == null) {
           findNewHost({ roomid: roomid, id: null })
+          return
         }
       }
     }
   }
 
   socket.on('send_updateStatus', data => {
-    if (data.broadcast)
-      socket.broadcast.to(data.roomid).emit('updateStatus', data.message)
-    else
-      io.to(data.roomid).emit('updateStatus', data.message)
+    for (let i = 0; i < gameRoomList.length; i++) {
+      if (gameRoomList[i].gameroomid == data.roomid) {
+        gameRoomList[i].hostUsername = data.host
+        break
+      }
+    }
+    socket.broadcast.to(data.roomid).emit('updateStatus', data.message)
   })
 
   socket.on('send_updateTimer', data => {
@@ -182,6 +188,7 @@ io.on('connection', socket => {
       if (gameRoomList[i].gameroomid == roomid) {
         gameRoomList[i].word = wordlist[getRandomInt(0, wordlist.length)]
         io.to(gameRoomList[i].host).emit('setWord', gameRoomList[i].word)
+        return
       }
     }
   }
@@ -198,6 +205,7 @@ io.on('connection', socket => {
         gameRoomList[i].host = temp_playerlist[getRandomInt(0, temp_playerlist.length)]
         io.to(data.roomid).emit('youarenothost')
         io.to(gameRoomList[i].host).emit('youarehost')
+        return
       }
     }
   }
@@ -228,6 +236,7 @@ io.on('connection', socket => {
             gameRoomList.splice(i, 1);
             io.to(LOBBY).emit('deleteRoom', focus)
           }
+          return
         }
       }
     }
@@ -237,35 +246,47 @@ io.on('connection', socket => {
     // console.log('message: ' + msg);
     // console.log('focus: ' + focus);
     const username = data.player
+    const chatMessage = data.message.replace(/<(?:.|\n)*?>/gm, '');
     let scoreindex = 0
+    let hostindex = 0
 
-    for (let i = 0; i < gameRoomList.length; i++) {
-      if (gameRoomList[i].gameroomid == focus) {
-        for (let j = 0; j < gameRoomList[i].scorelist.length; j++) {
-          if (gameRoomList[i].scorelist[j].player == username) {
-            scoreindex = j
-            break
+    if (inGame) {
+      for (let i = 0; i < gameRoomList.length; i++) {
+        if (gameRoomList[i].gameroomid == focus) {
+          for (let j = 0; j < gameRoomList[i].scorelist.length; j++) {
+            if (gameRoomList[i].scorelist[j].player == username) {
+              scoreindex = j
+            }
+            if (gameRoomList[i].scorelist[j].player == gameRoomList[i].hostUsername) {
+              hostindex = j
+            }
           }
-        }
-        if (scoreindex == 0) {
-          let temppackage = { player: username, score: 0 }
-          gameRoomList[i].scorelist.push(temppackage)
-          scoreindex = gameRoomList[i].scorelist.length - 1
-        }
-        io.to(focus).emit('consoleOut', gameRoomList[i].scorelist)
-        io.to(focus).emit('consoleOut', scoreindex)
-        io.to(focus).emit('chat message', username + "(" + gameRoomList[i].scorelist[scoreindex].score + "): " + data.message)
-        if (data.message.toLowerCase().includes(gameRoomList[i].word) && gameRoomList[i].host != data.playerid) {
-          gameRoomList[i].scorelist[scoreindex].score++
-          io.to(focus).emit('chat message', username + "(" + gameRoomList[i].scorelist[scoreindex].score + ") guessed the word!: " + gameRoomList[i].word)
-          getWord(focus)
-        }
-        return
-      }
-    }
 
-    io.to(focus).emit('chat message', username + ": " + data.message)
-  });
+          if (scoreindex == 0) {
+            let temppackage = { player: username, score: 0 }
+            gameRoomList[i].scorelist.push(temppackage)
+            scoreindex = gameRoomList[i].scorelist.length - 1
+          }
+          if (hostindex == 0) {
+            let temppackage = { player: gameRoomList[i].hostUsername, score: 0 }
+            gameRoomList[i].scorelist.push(temppackage)
+            hostindex = gameRoomList[i].scorelist.length - 1
+          }
+
+          io.to(focus).emit('chat message', username + "(" + gameRoomList[i].scorelist[scoreindex].score + "): " + chatMessage)
+          if (chatMessage.toLowerCase().includes(gameRoomList[i].word) && gameRoomList[i].host != data.playerid) {
+            gameRoomList[i].scorelist[scoreindex].score++
+            gameRoomList[i].scorelist[hostindex].score++
+            io.to(focus).emit('chat message', username + "(" + gameRoomList[i].scorelist[scoreindex].score + ") guessed the word!: " + gameRoomList[i].word)
+            getWord(focus)
+          }
+          break
+        }
+      }
+    } else {
+      io.to(focus).emit('chat message', username + ": " + chatMessage)
+    }
+  })
 
   socket.on('createroom', roomname => {
     const roomid = UUID();
@@ -275,6 +296,7 @@ io.on('connection', socket => {
       playerlist: [],
       scorelist: [{ player: "", score: 0 }],
       host: null,
+      hostUsername: null,
       word: null
     }
     gameRoomList.push(package);
