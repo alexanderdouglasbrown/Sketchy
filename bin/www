@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Module dependencies.
+ * Module dependencies
  */
 
 var app = require('../app');
@@ -21,7 +21,7 @@ app.set('port', port);
 
 //some temporary chat variables
 const LOBBY = 'lobby-chat';
-const LIMIT = 2;
+const LIMIT = 10;
 const PLAYERLIST = 'player-list';
 
 
@@ -114,7 +114,10 @@ io.on('connection', socket => {
     socket.join(playerid);
     for (let i = 0; i < gameRoomList.length; i++) {
       console.log(gameRoomList[i].gameroomname);
-      io.to(playerid).emit('newgame', gameRoomList[i]);
+      io.to(playerid).emit('newgame', {package : gameRoomList[i], limit : LIMIT, playercount : gameRoomList[i].playerlist.length});
+      if (gameRoomList[i].playerlist.length >= LIMIT) {
+       io.to(LOBBY).emit("disableRoom", gameRoomList[i].gameroomid)
+      }
       return
     };
   });
@@ -130,10 +133,11 @@ io.on('connection', socket => {
     for (let i = 0; i < gameRoomList.length; i++) {
       if (gameRoomList[i].gameroomid == data.roomid) {
         gameRoomList[i].playerlist.push(playerid)
+        io.to(LOBBY).emit('updateRoomList', {roomid : data.roomid, limit : LIMIT, playercount : gameRoomList[i].playerlist.length})
 
         if (gameRoomList[i].playerlist.length >= LIMIT) {
           console.log("disabling room ")
-          //  io.to(LOBBY).emit("diableRoom", data.roomid)
+          io.to(LOBBY).emit("disableRoom", data.roomid)
         }
         io.to(gameRoomList[i].host).emit('getStatus', playerid)
         break
@@ -220,13 +224,15 @@ io.on('connection', socket => {
         if (gameRoomList[i].gameroomid == focus) {
           let index = gameRoomList[i].playerlist.indexOf(playerid)
           gameRoomList[i].playerlist.splice(index, 1);
+          io.to(LOBBY).emit('updateRoomList', {roomid : focus, limit : LIMIT, playercount : gameRoomList[i].playerlist.length})
+
           if (gameRoomList[i].host == playerid) {
             gameRoomList[i].host = null
             startGameWhenReady(focus)
           }
 
-          if (gameRoomList[i].playerlist.length < LIMIT && gameRoomList[i].playerlist.length > 1) {
-            //      io.to(LOBBY).emit('enableRoom', focus)
+          if (gameRoomList[i].playerlist.length < LIMIT && gameRoomList[i].playerlist.length >= 1) {
+              io.to(LOBBY).emit('enableRoom', focus)
           }
           if (gameRoomList[i].playerlist.length == 1) {
             gameRoomList[i].host = null
@@ -249,6 +255,7 @@ io.on('connection', socket => {
     const chatMessage = data.message.replace(/<(?:.|\n)*?>/gm, '');
     let scoreindex = 0
     let hostindex = 0
+    let message = ' '
 
     if (inGame) {
       for (let i = 0; i < gameRoomList.length; i++) {
@@ -272,19 +279,22 @@ io.on('connection', socket => {
             gameRoomList[i].scorelist.push(temppackage)
             hostindex = gameRoomList[i].scorelist.length - 1
           }
-
-          io.to(focus).emit('chat message', username + "(" + gameRoomList[i].scorelist[scoreindex].score + "): " + chatMessage)
+        message = username + "( " + gameRoomList[i].scorelist[scoreindex].score + " ): " + data.message;
+        io.to(focus).emit('chat message', {msg : message, servermessage : false} )
+      
           if (chatMessage.toLowerCase().includes(gameRoomList[i].word) && gameRoomList[i].host != data.playerid) {
             gameRoomList[i].scorelist[scoreindex].score++
             gameRoomList[i].scorelist[hostindex].score++
-            io.to(focus).emit('chat message', username + "(" + gameRoomList[i].scorelist[scoreindex].score + ") guessed the word!: " + gameRoomList[i].word)
+          message = username + "( " + gameRoomList[i].scorelist[scoreindex].score + " ) guessed the word: " + gameRoomList[i].word
+          io.to(focus).emit('chat message',  {msg : message, servermessage : true})
             getWord(focus)
           }
           break
         }
       }
     } else {
-      io.to(focus).emit('chat message', username + ": " + chatMessage)
+          message =  username + ": " + data.message
+    io.to(focus).emit('chat message',{msg : message, servermessage : false})
     }
   })
 
@@ -301,7 +311,7 @@ io.on('connection', socket => {
     }
     gameRoomList.push(package);
 
-    io.to(LOBBY).emit('newgame', package);
+    io.to(LOBBY).emit('newgame',{ package : package, limit : LIMIT, playercount : 1});
     io.to(playerid).emit('enterRoom', roomid);
   });
 
@@ -319,20 +329,6 @@ io.on('connection', socket => {
     socket.broadcast.to(focus).emit('mirror-package', msg)
   });
 });
-
-function initializeSocket(socket) {
-
-  /*initialize socket info
-  
-    socketid
-    name 
-    focus 
-    isInitialized
-    isActive
-    ...
-    
-    */
-}
 
 //From Mozilla Docs
 function getRandomInt(min, max) {
@@ -366,5 +362,5 @@ wordlist = ["cat", "sun", "cup", "ghost", "flower", "pie", "cow",
   "stomach", "doghouse", "pajamas", "peach", "newspaper", "hook", "school", "beaver",
   "beehive", "beach", "artist", "flagpole", "camera", "mushroom", "toe", "pretzel",
   "tv", "quilt", "chalk", "dollar", "soda", "chin", "swing", "garden", "ticket", "boot",
-  "cello", "rain", "clam", "pelican", "stingray", "fur", "blowfish", "rainbow", "happy"
+  "cello", "rain", "clam", "pelican", "stingray", "fur", "blowfish", "rainbow", "happy", "fairy"
 ]

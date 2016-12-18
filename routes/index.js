@@ -14,7 +14,7 @@ router.get('/', function (req, res, next) {
   if (req.user == undefined)
     playerInfo = ''
   else
-    playerInfo = { id: req.user.id, email: req.user.displayName }
+    playerInfo = { id: req.user.id, email: req.user.email }
   res.render('index', { title: 'Sketchy', username: req.session.username, id: req.session.id, player: playerInfo });
 });
 /*
@@ -27,7 +27,7 @@ router.get('/game/:id', function (req, res, next) {
   setSession(req)
   req.session.roomId = req.params.id
   req.session.inGame = true;
-  res.render('game', { title: 'Sketchy', roomid: req.params.id, id: req.session.id, player: req.user.displayName, username: req.session.username })
+  res.render('game', { title: 'Sketchy', roomid: req.params.id, id: req.session.id, player: req.user.email, username: req.session.username })
   //res.send( 'Your game is ' + req.params.id )
 });
 
@@ -40,12 +40,12 @@ function setSession(req) {
     req.session.roomId = ' '
   }
   if (req.user) {
-    const email = req.user.displayName
-    let splitname = email.split(' ')
+    const email = req.user.email
+    let splitname = email.split('@')
     req.session.username = splitname[0]
   }
   else {
-    req.session.username = 'Anon' + random
+    req.session.username = "- please sign in"
   }
 }
 
@@ -68,7 +68,7 @@ router.get('/logout', function (request, response) {
 })
 
 router.get('/dashboard', isLoggedIn, function (req, res) {
-  res.render('index', { title: 'Sketchy', username: req.session.username, id: req.session.id, player: req.user.displayName });
+  res.render('index', { title: 'Sketchy', username: req.session.username, id: req.session.id, player: req.user.email });
 })
 
 function isLoggedIn(req, res, next) {

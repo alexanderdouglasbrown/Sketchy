@@ -21,18 +21,23 @@ $(document).ready(function () {
     return false;
   });
 
-  socket.on('chat message', msg => {
-    $('.messages').append('<li class = "message list-group-item"> ' + msg + '</li>');
-    $('#chat').scrollTop($('#chat').prop('scrollHeight'))
+  socket.on('chat message', data => {
+
+    if ( data.servermessage) {
+      $('.messages').append('<li class = "message list-group-item" id  = "servermessage"> ' + data.msg + '</li>');
+    } else {
+      $('.messages').append('<li class = "message list-group-item"> ' + data.msg + '</li>');
+    }
+    $('#chat ul').scrollTop($('#chat ul').prop('scrollHeight'))
+
   });
 
   socket.on('enableRoom', id => {
-    $('#' + id).style.pointerEvents = 'auto';
-
+    $('#' + id).css('z-index' , '0')
   });
 
   socket.on('disableRoom', id => {
-    $('#' + id).style.pointerEvents = 'none';
+    $('#' + id).css('z-index' , '-1')
 
   });
 
@@ -60,9 +65,8 @@ $(document).ready(function () {
   })
 
   socket.on('newgame', data => {
-    gameroomcounter++;
-    let roomcolor;
-    let roomimg;
+    let roomcolor
+    let roomimg
 
     switch (gameroomcounter % 6) {
       case 0:
@@ -90,9 +94,13 @@ $(document).ready(function () {
         roomimg = "/images/bunny.png"
         break
     }
-
-    $('.activegames').prepend('<li><a class = "games list-group-item default" style = "background-color: ' + roomcolor + '" id = "' + data.gameroomid + '" > <img src=" ' + roomimg + ' "> ' + data.gameroomname + '</a></li>');
+    gameroomcounter++
+    $('.activegames').prepend('<li><a class = "games list-group-item default" style = "background-color: ' + roomcolor + '" id = "' + data.package.gameroomid + '" > <img src=" ' + roomimg + ' "> <span class ="playercount" > [ '+data.playercount+' / '+data.limit+' ] </span> ' + data.package.gameroomname + ' </a></li>');
   });
+
+  socket.on('updateRoomList', data => {
+    $('#' + data.roomid + ' .playercount').html('[ ' +data.playercount+ ' / '+data.limit+' ] ')
+  })
 
   $('#gamerooms form').submit(event => {
     if (player === '') {
