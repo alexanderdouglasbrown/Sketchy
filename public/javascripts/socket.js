@@ -7,13 +7,14 @@ let gameroomcounter = 0;
 $(document).ready(function () {
 
   $('#messages form').submit(function () {
-    if(player === '') {
+    if (player === '') {
       $('#popup').modal('show');
       $('#messages input').val('')
     } else {
       const val = $('#messages input').val();
       if (val.length > 0) {
-        socket.emit('chat message', getTimestamp() + ' ' + player + ' ' + val);
+        //socket.emit('chat message', getTimestamp() + ' ' + player + ' ' + val);
+        socket.emit('chat message', { message: val, player: player, playerid: playerid });
         $('#messages input').val('');
 
       }
@@ -51,28 +52,28 @@ $(document).ready(function () {
     let roomcolor;
     let roomimg;
 
-    switch(gameroomcounter%6){
-      case 0 : 
+    switch (gameroomcounter % 6) {
+      case 0:
         roomcolor = "#ffffd9"
         roomimg = "/images/sun.png"
         break
-      case 1 : 
+      case 1:
         roomcolor = "#ffd9d9"
         roomimg = "/images/car.png"
         break
-      case 2 : 
+      case 2:
         roomcolor = "#d9f4ff"
         roomimg = "/images/bird.png"
         break
-      case 3 : 
+      case 3:
         roomcolor = "#f4fff4"
         roomimg = "/images/tree.png"
         break
-      case 4 : 
+      case 4:
         roomcolor = "#f4d9ff"
-        roomimg ="/images/moon.png"
+        roomimg = "/images/moon.png"
         break
-      case 5 : 
+      case 5:
         roomcolor = "#fff4ff"
         roomimg = "/images/bunny.png"
         break
@@ -82,7 +83,7 @@ $(document).ready(function () {
   });
 
   $('#gamerooms form').submit(event => {
-    if(player === '') {
+    if (player === '') {
       $('#popup').modal('show');
       $('#messages input').val('')
     } else {
@@ -103,28 +104,28 @@ function getTimestamp() {
   var currentTime = new Date()
   var timezoneOffset = currentTime.getTimezoneOffset() / 60
 
-  var currentHour = ( 
+  var currentHour = (
     () => {
       var hour = currentTime.getUTCHours()
-      if( timezoneOffset < 0 )
+      if (timezoneOffset < 0)
         hour += timezoneOffset
-      else  
+      else
         hour -= timezoneOffset
-      if( hour < 0 )
+      if (hour < 0)
         hour += 24
-      else if( hour >= 24 )
+      else if (hour >= 24)
         hour -= 24
       return hour
-    } 
+    }
   )()
 
-  var currentMinutes = ( 
-      () => {
+  var currentMinutes = (
+    () => {
       minutes = currentTime.getUTCMinutes()
-      if( minutes < 10 ) 
+      if (minutes < 10)
         minute = '0' + minutes
       return minutes
-    } 
+    }
   )()
 
   return '[' + currentHour + ':' + currentMinutes + ']'

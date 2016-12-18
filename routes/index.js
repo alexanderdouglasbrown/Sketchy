@@ -18,11 +18,11 @@ router.get('/game', function(req, res, next) {
 });
 */
 
-router.get('/chat', function(req, res, next) {
-  setSession(req.session);
-  res.render('chat', { title: 'Chat Sample' }); 
-  res.send({hi : 'hello'}) 
-});
+// router.get('/chat', function(req, res, next) {
+//   setSession(req.session);
+//   res.render('chat', { title: 'Chat Sample' }); 
+//   res.send({hi : 'hello'}) 
+// });
 
 router.get('/game/:id', function (req, res, next) {
   setSession(req.session)
@@ -75,8 +75,8 @@ function isLoggedIn(req, res, next) {
   res.redirect('/');
 }
 
-router.get('/sendme', function(res,rep){
-   response.send({hi : 'hello'})
-})
+// router.get('/sendme', function(res,rep){
+//    response.send({hi : 'hello'})
+// })
 
 module.exports = router;

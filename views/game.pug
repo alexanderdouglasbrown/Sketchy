@@ -36,7 +36,6 @@ block content
     const roomid = "#{roomid}"
     window.onload = () => {
       socket.emit('loadGame', {roomid : roomid, id : "#{id}"});
-      console.log(socket.handshake.sessionid)
     }
   script(src="/javascripts/artpad.js")
   script(src='/javascripts/game.js')
