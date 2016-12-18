@@ -47,6 +47,7 @@ block content
 
     script(src='/javascripts/socket.js')
     script.
+      const playerid = "#{id}"
       window.onload = () => {
         socket.emit('loadLobby', {username : "#{username}", id : "#{id}"});
       }

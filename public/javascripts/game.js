@@ -20,6 +20,11 @@ socket.on('getStatus', (from) => {
     socket.emit('sendStatus', { message: game.statusMessage, to: from })
 })
 
+socket.on('setWord', (word) => {
+    game.word = word
+    $('#status').html("Draw: " + game.word)
+})
+
 socket.on('updateTimer', (package) => {
     const min = Math.floor(package / 60)
     const sec = package % 60
@@ -82,12 +87,7 @@ function findNewHost() {
 }
 
 function setWord() {
-    getWord()
-    $('#status').html("Draw: " + game.word)
-}
-
-function getWord() {
-    game.word = wordlist[getRandomInt(0,wordlist.length)]
+    socket.emit('getWord', roomid)
 }
 
 function resetThings() {
@@ -96,31 +96,6 @@ function resetThings() {
     clearInterval(game.timerInterval)
 }
 
-//From Mozilla Docs
-function getRandomInt(min, max) {
-  min = Math.ceil(min)
-  max = Math.floor(max)
-  return Math.floor(Math.random() * (max - min)) + min
-}
-
-//Temp list
-wordlist = [
-    "Candle",
-    "Cat",
-    "Burger",
-    "Sun",
-    "Cup",
-    "Ghost",
-    "Flower",
-    "Pie",
-    "Cow",
-    "Banana",
-    "Snowflake",
-    "Cow",
-    "Clam",
-    "Rain",
-    "Dollar",
-    "Soda",
-    "TV",
-    "Owl"
-]
+$('#skip').click(() => {
+    setWord()
+})

@@ -21,6 +21,7 @@ app.set('port', port);
 
 //some temporary chat variables
 const LOBBY = 'lobby-chat';
+const LIMIT = 2;
 const PLAYERLIST = 'player-list';
 
 
@@ -38,7 +39,7 @@ server.on('listening', onListening);
 
 // socket functionality 
 
-/**
+/**socket
  * Normalize a port into a number, string, or false.
  */
 
@@ -128,6 +129,11 @@ io.on('connection', socket => {
     for (let i = 0; i < gameRoomList.length; i++) {
       if (gameRoomList[i].gameroomid == data.roomid) {
         gameRoomList[i].playerlist.push(playerid)
+
+        if (gameRoomList[i].playerlist.length >= LIMIT) {
+          console.log("disabling room ")
+          //  io.to(LOBBY).emit("diableRoom", data.roomid)
+        }
         io.to(gameRoomList[i].host).emit('getStatus', playerid)
       }
     }
@@ -167,6 +173,19 @@ io.on('connection', socket => {
     findNewHost(data)
   })
 
+  socket.on('getWord', roomid => {
+    getWord(roomid)
+  })
+
+  function getWord(roomid) {
+    for (let i = 0; i < gameRoomList.length; i++) {
+      if (gameRoomList[i].gameroomid == roomid) {
+        gameRoomList[i].word = wordlist[getRandomInt(0, wordlist.length)]
+        io.to(gameRoomList[i].host).emit('setWord', gameRoomList[i].word)
+      }
+    }
+  }
+
   function findNewHost(data) {
     temp_playerlist = []
     for (let i = 0; i < gameRoomList.length; i++) {
@@ -197,27 +216,55 @@ io.on('connection', socket => {
             gameRoomList[i].host = null
             startGameWhenReady(focus)
           }
-          if (gameRoomList[i].playerlist.length <= 1) {
+
+          if (gameRoomList[i].playerlist.length < LIMIT && gameRoomList[i].playerlist.length > 1) {
+            //      io.to(LOBBY).emit('enableRoom', focus)
+          }
+          if (gameRoomList[i].playerlist.length == 1) {
+            gameRoomList[i].host = null
             io.to(focus).emit('endgame')
+          }
+          if (gameRoomList[i].playerlist.length < 1) {
+            gameRoomList.splice(i, 1);
+            io.to(LOBBY).emit('deleteRoom', focus)
           }
         }
       }
     }
   })
 
-  // socket.on('joinRoom', roomid => {
-  //   for (let i = 0; i < gameRoomList.length; i++) {
-  //     if (gameRoomList[i].gameroomid == roomid) {
-  //       //gameRoomList[i].playerlist.push(playerid);
-  //       console.log("number of players: " + gameRoomList[i].playerlist.length);
-  //     }
-  //   }
-  // });
+  socket.on('chat message', data => {
+    // console.log('message: ' + msg);
+    // console.log('focus: ' + focus);
+    const username = data.player
+    let scoreindex = 0
 
-  socket.on('chat message', msg => {
-    console.log('message: ' + msg);
-    console.log('focus: ' + focus);
-    io.to(focus).emit('chat message', msg);
+    for (let i = 0; i < gameRoomList.length; i++) {
+      if (gameRoomList[i].gameroomid == focus) {
+        for (let j = 0; j < gameRoomList[i].scorelist.length; j++) {
+          if (gameRoomList[i].scorelist[j].player == username) {
+            scoreindex = j
+            break
+          }
+        }
+        if (scoreindex == 0) {
+          let temppackage = { player: username, score: 0 }
+          gameRoomList[i].scorelist.push(temppackage)
+          scoreindex = gameRoomList[i].scorelist.length - 1
+        }
+        io.to(focus).emit('consoleOut', gameRoomList[i].scorelist)
+        io.to(focus).emit('consoleOut', scoreindex)
+        io.to(focus).emit('chat message', username + "(" + gameRoomList[i].scorelist[scoreindex].score + "): " + data.message)
+        if (data.message.toLowerCase().includes(gameRoomList[i].word) && gameRoomList[i].host != data.playerid) {
+          gameRoomList[i].scorelist[scoreindex].score++
+          io.to(focus).emit('chat message', username + "(" + gameRoomList[i].scorelist[scoreindex].score + ") guessed the word!: " + gameRoomList[i].word)
+          getWord(focus)
+        }
+        return
+      }
+    }
+
+    io.to(focus).emit('chat message', username + ": " + data.message)
   });
 
   socket.on('createroom', roomname => {
@@ -226,7 +273,9 @@ io.on('connection', socket => {
       gameroomid: roomid,
       gameroomname: roomname,
       playerlist: [],
-      host: null
+      scorelist: [{ player: "", score: 0 }],
+      host: null,
+      word: null
     }
     gameRoomList.push(package);
 
@@ -269,3 +318,31 @@ function getRandomInt(min, max) {
   max = Math.floor(max)
   return Math.floor(Math.random() * (max - min)) + min
 }
+
+//Temp list
+wordlist = ["cat", "sun", "cup", "ghost", "flower", "pie", "cow",
+  "banana", "snowflake", "bug", "book", "jar", "snake", "light", "tree", "lips", "apple",
+  "slide", "socks", "smile", "swing", "coat", "shoe", "water", "heart", "hat", "ocean",
+  "kite", "dog", "mouth", "milk", "duck", "eyes", "skateboard", "bird", "boy", "apple",
+  "person", "girl", "mouse", "ball", "house", "star", "nose", "bed", "whale", "jacket",
+  "shirt", "hippo", "beach", "egg", "face", "cookie", "cheese", "drum", "circle", "spoon",
+  "worm", "bridge", "bone", "grapes", "bell", "jellyfish", "bunny", "truck", "grass",
+  "door", "monkey", "spider", "bread", "ears", "bowl", "bracelet", "alligator", "bat",
+  "clock", "lollipop", "moon", "doll", "orange", "ear", "basketball", "bike", "airplane",
+  "pen", "inchworm", "seashell", "rocket", "cloud", "bear", "corn", "chicken", "purse",
+  "glasses", "blocks", "carrot", "turtle", "pencil", "horse", "dinosaur", "head", "lamp",
+  "snowman", "ant", "giraffe", "cupcake", "chair", "leaf", "snail", "baby", "balloon", "bus",
+  "cherry", "crab", "football", "branch", "robot", "horse", "door", "song", "trip", "backbone",
+  "bomb", "round", "treasure", "garbage", "park", "pirate", "ski", "state", "whistle", "palace",
+  "baseball", "coal", "queen", "dominoes", "photograph", "computer", "hockey", "aircraft",
+  "hotdog", "key", "whisk", "frog", "lawnmower", "mattress", "pinwheel", "cake", "circus",
+  "battery", "mailman", "cowboy", "password", "bicycle", "skate", "electricity", "lightsaber",
+  "thief", "teapot", "deep", "spring", "nature", "shallow", "toast", "outside", "America",
+  "bowtie", "half", "spare", "wax", "platypus", "music", "sailboat", "popsicle", "brain",
+  "skirt", "knee", "pineapple", "tusk", "sprinkler", "money", "spool", "lighthouse",
+  "doormat", "face", "flute", "rug", "snowball", "purse", "owl", "gate", "suitcase",
+  "stomach", "doghouse", "pajamas", "peach", "newspaper", "hook", "school", "beaver",
+  "beehive", "beach", "artist", "flagpole", "camera", "mushroom", "toe", "pretzel",
+  "tv", "quilt", "chalk", "dollar", "soda", "chin", "swing", "garden", "ticket", "boot",
+  "cello", "rain", "clam", "pelican", "stingray", "fur", "blowfish", "rainbow", "happy"
+]

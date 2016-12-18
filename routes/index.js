@@ -11,11 +11,11 @@ router.get('/', function (req, res, next) {
   req.session.roomId = ' ';
   req.session.inGame = false;
   let playerInfo
-  if(req.user == undefined)
+  if (req.user == undefined)
     playerInfo = ''
   else
-    playerInfo = {id: req.user.id, email: req.user.displayName}
-  res.render('index', { title: 'Sketchy', username: req.session.username, id: req.session.id, player: playerInfo});
+    playerInfo = { id: req.user.id, email: req.user.displayName }
+  res.render('index', { title: 'Sketchy', username: req.session.username, id: req.session.id, player: playerInfo });
 });
 /*
 router.get('/game', function(req, res, next) {
@@ -23,17 +23,11 @@ router.get('/game', function(req, res, next) {
 });
 */
 
-router.get('/chat', function(req, res, next) {
-  setSession(req);
-  res.render('chat', { title: 'Chat Sample' }); 
-  res.send({hi : 'hello'}) 
-});
-
 router.get('/game/:id', function (req, res, next) {
   setSession(req)
   req.session.roomId = req.params.id
   req.session.inGame = true;
-  res.render('game', { title: 'Sketchy', roomid: req.params.id, id: req.session.id, player : req.user.displayName  })
+  res.render('game', { title: 'Sketchy', roomid: req.params.id, id: req.session.id, player: req.user.displayName, username: req.session.username })
   //res.send( 'Your game is ' + req.params.id )
 });
 
@@ -55,40 +49,40 @@ function setSession(req) {
   }
 }
 
-router.get( '/auth', 
+router.get('/auth',
   passport.authenticate('google', {
-    scope: ['profile', 'email'] 
+    scope: ['profile', 'email']
   })
 )
 
-router.get( '/auth/callback', 
-  passport.authenticate( 'google', {
+router.get('/auth/callback',
+  passport.authenticate('google', {
     successRedirect: '/',
     failureRedirect: '/'
   })
 )
 
-router.get( '/logout', function( request, response ) {
+router.get('/logout', function (request, response) {
   request.logout()
   response.redirect('/')
 })
 
-router.get( '/dashboard', isLoggedIn, function ( req, res ) {
-  res.render('index', { title: 'Sketchy', username: req.session.username, id: req.session.id, player: req.user.displayName});
+router.get('/dashboard', isLoggedIn, function (req, res) {
+  res.render('index', { title: 'Sketchy', username: req.session.username, id: req.session.id, player: req.user.displayName });
 })
 
 function isLoggedIn(req, res, next) {
   // if user is authenticated in the session, carry on
   console.log(req.isAuthenticated())
   if (req.isAuthenticated())
-      return next();
+    return next();
 
   // if they aren't redirect them to the home page
   res.redirect('/');
 }
 
-router.get('/sendme', function(res,rep){
-   response.send({hi : 'hello'})
-})
+// router.get('/sendme', function(res,rep){
+//    response.send({hi : 'hello'})
+// })
 
 module.exports = router;
