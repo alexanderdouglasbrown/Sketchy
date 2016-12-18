@@ -279,13 +279,13 @@ io.on('connection', socket => {
             gameRoomList[i].scorelist.push(temppackage)
             hostindex = gameRoomList[i].scorelist.length - 1
           }
-        message = username + " ( " + gameRoomList[i].scorelist[scoreindex].score + " ) :" + data.message;
+        message = username + "( " + gameRoomList[i].scorelist[scoreindex].score + " ): " + data.message;
         io.to(focus).emit('chat message', {msg : message, servermessage : false} )
       
           if (chatMessage.toLowerCase().includes(gameRoomList[i].word) && gameRoomList[i].host != data.playerid) {
             gameRoomList[i].scorelist[scoreindex].score++
             gameRoomList[i].scorelist[hostindex].score++
-          message = username + " ( " + gameRoomList[i].scorelist[scoreindex].score + " ) guessed the word! : " + gameRoomList[i].word
+          message = username + "( " + gameRoomList[i].scorelist[scoreindex].score + " ) guessed the word: " + gameRoomList[i].word
           io.to(focus).emit('chat message',  {msg : message, servermessage : true})
             getWord(focus)
           }
@@ -293,7 +293,7 @@ io.on('connection', socket => {
         }
       }
     } else {
-          message =  username + " : " + data.message
+          message =  username + ": " + data.message
     io.to(focus).emit('chat message',{msg : message, servermessage : false})
     }
   })
@@ -362,6 +362,5 @@ wordlist = ["cat", "sun", "cup", "ghost", "flower", "pie", "cow",
   "stomach", "doghouse", "pajamas", "peach", "newspaper", "hook", "school", "beaver",
   "beehive", "beach", "artist", "flagpole", "camera", "mushroom", "toe", "pretzel",
   "tv", "quilt", "chalk", "dollar", "soda", "chin", "swing", "garden", "ticket", "boot",
-  "cello", "rain", "clam", "pelican", "stingray", "fur", "blowfish", "rainbow", "happy", "sketchy",
-  "shulk" , "monado" , "pokemon" , "pikachu" , "triforce" , "fairy" , "mario" , "yoshi" , "kirby"
+  "cello", "rain", "clam", "pelican", "stingray", "fur", "blowfish", "rainbow", "happy", "fairy"
 ]
