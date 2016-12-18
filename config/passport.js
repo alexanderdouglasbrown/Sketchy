@@ -1,6 +1,6 @@
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
 
-var configAuth = require('./authentication')
+//var configAuth = require('./authentication')
 
 var Player = function(id, displayName) {
   this.id = id;
@@ -18,9 +18,9 @@ module.exports = function( passport ) {
   })
 
   passport.use( new GoogleStrategy( {
-    clientID: (process.env.GAPI_CLIENT_ID || configAuth.googleAuth.client_id),
-    clientSecret: (process.env.GAPI_CLIENT_SECRET || configAuth.googleAuth.client_secret),
-    callbackURL: (process.env.GAPI_CALLBACK_URL || configAuth.googleAuth.callback_url)
+    clientID: process.env.GAPI_CLIENT_ID,// || configAuth.googleAuth.client_id),
+    clientSecret: process.env.GAPI_CLIENT_SECRET,// || configAuth.googleAuth.client_secret),
+    callbackURL: process.env.GAPI_CALLBACK_URL// || configAuth.googleAuth.callback_url)
   },
   
   function( token, refreshToken, profile, done ) {
@@ -31,4 +31,3 @@ module.exports = function( passport ) {
     })
   }))
 }
-
