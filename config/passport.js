@@ -10,7 +10,7 @@ var Player = function(id, displayName) {
 
 module.exports = function( passport ) {
   passport.serializeUser( function( player, done ) {
-    done( null, player.displayName)
+    done( null, player)
   })
 
   passport.deserializeUser( function( id, done ) {
