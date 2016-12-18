@@ -4,7 +4,7 @@ block content
   main.container
     .row
       .col-xs-12#topBar
-        p Welcome #{player.email}
+        p Welcome #{username}
       .col-md-7.col-sm-12#gamerooms
         .col-xs-12#rooms
           ul.activegames.list-group
@@ -17,7 +17,7 @@ block content
                   button.btn.btn-secondary(type='button', data-dismiss='modal') Close
         form.input-group.inputBoxes(action = " ", data-toggle='modal', data-target='popup')
           input.form-control(type="text")
-          .modal.fade(tabindex='-1', role='dialog', arai-labelledby='popupLabel', aria-hidden='true')#popup
+          .modal.fade(tabindex='-1', role='dialog', arai-labelledby='popupLabel', aria-hidden='true')#gameRoomPopup
             .modal-dialog.modal-sm(role='document')
               .modal-content
                 .modal-body
@@ -31,7 +31,7 @@ block content
           ul.messages.list-group
         form.input-group.inputBoxes(action=" ")
           input.form-control(type="text",rows="1", autocomplete = "off", data-toggle='modal', data-target='popup')#chatTextArea
-          .modal.fade(tabindex='-1', role='dialog', arai-labelledby='popupLabel', aria-hidden='true')#popup
+          .modal.fade(tabindex='-1', role='dialog', arai-labelledby='popupLabel', aria-hidden='true')#chatPopup
             .modal-dialog.modal-sm(role='document')
               .modal-content
                 .modal-body
@@ -42,6 +42,8 @@ block content
             button.btn.btn-default(type = "submit")#submit Submit
         script.
           const player = '#{player}'
+          const username = '#{username}'
+          
 
     script(src='/javascripts/socket.js')
     script.

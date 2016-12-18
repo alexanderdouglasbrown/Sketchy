@@ -8,12 +8,12 @@ $(document).ready(function () {
 
   $('#messages form').submit(function () {
     if(player === '') {
-      $('#popup').modal('show');
+      $('#chatPopup').modal('show');
       $('#messages input').val('')
     } else {
       const val = $('#messages input').val();
       if (val.length > 0) {
-        socket.emit('chat message', getTimestamp() + ' ' + player + ' ' + val);
+        socket.emit('chat message', getTimestamp() + ' '  + username + ' ' + val);
         $('#messages input').val('');
 
       }
@@ -36,7 +36,7 @@ $(document).ready(function () {
     //console.log(event.target.id);
     if (event.target.id != "rooms" && event.target.id != "") {
       if(player === '') {
-        $('#popup').modal('show');
+        $('#roomPopup').modal('show');
       } else {
         window.location = '/game/' + event.target.id
         // socket.emit('joinRoom', event.target.id)
@@ -87,7 +87,7 @@ $(document).ready(function () {
 
   $('#gamerooms form').submit(event => {
     if(player === '') {
-      $('#popup').modal('show');
+      $('#gameRoomPopup').modal('show');
       $('#messages input').val('')
     } else {
       const roomname = $('#gamerooms input').val();
@@ -126,7 +126,7 @@ function getTimestamp() {
       () => {
       minutes = currentTime.getUTCMinutes()
       if( minutes < 10 ) 
-        minute = '0' + minutes
+        minutes = '0' + minutes
       return minutes
     } 
   )()
