@@ -15,8 +15,9 @@ block content
           const player = '#{player}'
       #topBar
         .row#statusBar
-          .col-lg-8#status Waiting on other players...
-          .col-lg-3#timer
+          #status 
+            p Waiting on other players...
+          #timer
       canvas#artpadCanvas
       br
       #toolbar

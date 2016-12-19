@@ -13,7 +13,7 @@ socket.on('consoleOut', (package) => {
 })
 
 socket.on('updateStatus', (package) => {
-    $('#status').html(package)
+    $('#status p').html(package)
 })
 
 socket.on('getStatus', (from) => {
@@ -22,7 +22,7 @@ socket.on('getStatus', (from) => {
 
 socket.on('setWord', (word) => {
     game.word = word
-    $('#status').html("Draw: " + game.word)
+    $('#status p').html("Draw: " + game.word)
 })
 
 socket.on('updateTimer', (package) => {
@@ -37,7 +37,7 @@ socket.on('updateTimer', (package) => {
 
 socket.on('endgame', () => {
     game.statusMessage = "Game halted. Not enough players"
-    $('#status').html(game.statusMessage)
+    $('#status p').html(game.statusMessage)
     $('#timer').html("")
     resetThings()
 })
@@ -49,7 +49,7 @@ socket.on('setReadOnly', () => {
 socket.on('youarehost', (package) => {
     game.statusMessage = username + " is up. Game is about to begin"
     socket.emit('send_updateStatus', { message: game.statusMessage, roomid: roomid, host: username })
-    $('#status').html("You're up next")
+    $('#status p').html("You're up next")
     game.timeRemaining = game.waitLength
     game.timerInterval = setInterval(iterateCountDown, 1000)
 })

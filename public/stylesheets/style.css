@@ -16,6 +16,8 @@ navbar{
 
 #timer {
   font-size : 30px;
+  margin-right: 30px;
+  float: right;
 }
 
 #topBar {
@@ -60,19 +62,22 @@ navbar{
 
 #statusBar{
   margin-left: 30px;
-  width: 500px;
-  overflow: hidden;
 }
 
 .chatoffset{
   margin-top: 60px;
 }
 
-#statusBar p, #topBar p{
+#statusBar p, #topBar p {
   font-size: 16pt;
   margin-bottom: -5px;
 }
 
+#status p {
+  margin-top: 5px;
+  font-size: 16pt;
+  float: left;
+}
 
 #status span{
   color: red;
