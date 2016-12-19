@@ -12,7 +12,10 @@ const artpad = {
     dirtyUndo: false,
     mirror_isHolding: false,
     clearWasPressed: false,
-    readOnly: true
+    readOnly: true,
+    tempLocked: false,
+    fadeCounter: 60,
+    fadeInterval: null
 }
 
 let payload = []
@@ -48,7 +51,7 @@ $(window).on("blur", cancelMouseHold)
 $('#artpadCanvas').on("touchcancel", cancelMouseHold)
 
 function pressDown(e) {
-    if (!artpad.readOnly) {
+    if (!artpad.readOnly && !artpad.tempLocked) {
         e = e || window.event
         const mouseX = (e.pageX - this.offsetLeft + 1)
         const mouseY = (e.pageY - this.offsetTop + 1)
@@ -79,7 +82,7 @@ function pressDown(e) {
 }
 
 function pressMove(e) {
-    if (artpad.isHolding && !artpad.readOnly) {
+    if (artpad.isHolding && !artpad.readOnly && !artpad.tempLocked) {
         e = e || window.event
         const mouseX = (e.pageX - this.offsetLeft + 1)
         const mouseY = (e.pageY - this.offsetTop + 1)
@@ -89,9 +92,8 @@ function pressMove(e) {
     }
 }
 
-function cancelMouseHold(e) {
+function cancelMouseHold() {
     if (!artpad.readOnly) {
-        e = e || window.event
         artpad.isHolding = false
 
         buildPayload(null, null, false, artpad.context.strokeStyle)
@@ -153,6 +155,25 @@ socket.on('resync', () => {
         payload.push([null, null, false, null])
     }
 })
+
+socket.on('artpad victory', () => {
+    cancelMouseHold()
+    artpad.tempLocked = true
+    artpad.context.globalAlpha = 0.15
+    artpad.fadeInterval = setInterval(fadeout, 16)
+})
+
+function fadeout() {
+    artpad.context.fillRect(0, 0, artpad.width, artpad.height)
+    artpad.fadeCounter--
+    if (artpad.fadeCounter <= 0) {
+        artpad.context.globalAlpha = 1
+        artpad.tempLocked = false
+        artpad.fadeCounter = 60
+        clearInterval(artpad.fadeInterval)
+        clearButton()
+    }
+}
 
 function clearScreen() {
     artpad.context.fillRect(0, 0, artpad.width, artpad.height)
@@ -232,6 +253,10 @@ $('#eraser').click(() => {
 })
 
 $('#clear').click(() => {
+    clearButton()
+})
+
+function clearButton() {
     clearScreen()
     sendClearScreen()
 
@@ -251,7 +276,7 @@ $('#clear').click(() => {
     artpad.lastChange = []
     sendClearScreen()
     buildLastChange(null, null, null, "clear")
-})
+}
 
 $('#undo').click(() => {
     undo()

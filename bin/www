@@ -202,7 +202,7 @@ io.on('connection', socket => {
             .then(function (data) {
                 for (let i = 0; i < gameRoomList.length; i++) {
                     if (gameRoomList[i].gameroomid == roomid) {
-                        gameRoomList[i].word = data.word
+                        gameRoomList[i].word = data.word.toLowerCase()
                         io.to(gameRoomList[i].host).emit('setWord', gameRoomList[i].word)
                         return
                     }
@@ -315,6 +315,7 @@ io.on('connection', socket => {
             gameRoomList[i].scorelist[hostindex].score++
             message = "<b>" + username + "( " + gameRoomList[i].scorelist[scoreindex].score + " ) </b> guessed the word: <b><i>" + gameRoomList[i].word + "</i></b>"
             io.to(socket.focus).emit('chat message', { msg: message, servermessage: true })
+            io.to(socket.focus).emit('artpad victory')
             getWord(socket.focus)
           }
           break
