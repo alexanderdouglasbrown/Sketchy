@@ -114,9 +114,9 @@ io.on('connection', socket => {
     socket.join(playerid);
     for (let i = 0; i < gameRoomList.length; i++) {
       console.log(gameRoomList[i].gameroomname);
-      io.to(playerid).emit('newgame', {package : gameRoomList[i], limit : LIMIT, playercount : gameRoomList[i].playerlist.length});
+      io.to(playerid).emit('newgame', { package: gameRoomList[i], limit: LIMIT, playercount: gameRoomList[i].playerlist.length });
       if (gameRoomList[i].playerlist.length >= LIMIT) {
-       io.to(LOBBY).emit("disableRoom", gameRoomList[i].gameroomid)
+        io.to(LOBBY).emit("disableRoom", gameRoomList[i].gameroomid)
       }
       return
     };
@@ -133,7 +133,8 @@ io.on('connection', socket => {
     for (let i = 0; i < gameRoomList.length; i++) {
       if (gameRoomList[i].gameroomid == data.roomid) {
         gameRoomList[i].playerlist.push(playerid)
-        io.to(LOBBY).emit('updateRoomList', {roomid : data.roomid, limit : LIMIT, playercount : gameRoomList[i].playerlist.length})
+        gameRoomList[i].hostlist.push(playerid)
+        io.to(LOBBY).emit('updateRoomList', { roomid: data.roomid, limit: LIMIT, playercount: gameRoomList[i].playerlist.length })
 
         if (gameRoomList[i].playerlist.length >= LIMIT) {
           console.log("disabling room ")
@@ -198,15 +199,27 @@ io.on('connection', socket => {
   }
 
   function findNewHost(data) {
-    temp_playerlist = []
     for (let i = 0; i < gameRoomList.length; i++) {
       if (gameRoomList[i].gameroomid == data.roomid) {
-        for (let j = 0; j < gameRoomList[i].playerlist.length; j++) {
-          if (gameRoomList[i].playerlist[j] != gameRoomList[i].host) {
-            temp_playerlist.push(gameRoomList[i].playerlist[j])
+        if (gameRoomList[i].hostlist.length == 0) {
+          let topscoreindex = -1
+          let topscore = 0
+          for (let j = 0; j < gameRoomList[i].scorelist.length; j++) {
+            if (gameRoomList[i].scorelist[j].score > topscore) {
+              topscore = gameRoomList[i].scorelist[j].score
+              topscoreindex = j
+            }
           }
+
+          if (topscoreindex != -1) {
+            let message = "Current lead: " + gameRoomList[i].scorelist[topscoreindex].player + " at " + gameRoomList[i].scorelist[topscoreindex].score + " points!"
+            io.to(focus).emit('chat message', { msg: message, servermessage: true })
+          }
+
+          for (let j = 0; j < gameRoomList[i].playerlist.length; j++)
+            gameRoomList[i].hostlist.push(gameRoomList[i].playerlist[j])
         }
-        gameRoomList[i].host = temp_playerlist[getRandomInt(0, temp_playerlist.length)]
+        gameRoomList[i].host = gameRoomList[i].hostlist.shift()
         io.to(data.roomid).emit('youarenothost')
         io.to(gameRoomList[i].host).emit('youarehost')
         return
@@ -223,8 +236,10 @@ io.on('connection', socket => {
       for (let i = 0; i < gameRoomList.length; i++) {
         if (gameRoomList[i].gameroomid == focus) {
           let index = gameRoomList[i].playerlist.indexOf(playerid)
-          gameRoomList[i].playerlist.splice(index, 1);
-          io.to(LOBBY).emit('updateRoomList', {roomid : focus, limit : LIMIT, playercount : gameRoomList[i].playerlist.length})
+          let hostToDelete = gameRoomList[i].hostlist.indexOf(playerid)
+          gameRoomList[i].playerlist.splice(index, 1)
+          gameRoomList[i].hostlist.splice(hostToDelete, 1)
+          io.to(LOBBY).emit('updateRoomList', { roomid: focus, limit: LIMIT, playercount: gameRoomList[i].playerlist.length })
 
           if (gameRoomList[i].host == playerid) {
             gameRoomList[i].host = null
@@ -232,7 +247,7 @@ io.on('connection', socket => {
           }
 
           if (gameRoomList[i].playerlist.length < LIMIT && gameRoomList[i].playerlist.length >= 1) {
-              io.to(LOBBY).emit('enableRoom', focus)
+            io.to(LOBBY).emit('enableRoom', focus)
           }
           if (gameRoomList[i].playerlist.length == 1) {
             gameRoomList[i].host = null
@@ -252,7 +267,8 @@ io.on('connection', socket => {
     // console.log('message: ' + msg);
     // console.log('focus: ' + focus);
     const username = data.player
-    const chatMessage = data.message.replace(/<(?:.|\n)*?>/gm, '');
+    // http://stackoverflow.com/questions/822452/strip-html-from-text-javascript
+    const chatMessage = data.message.replace(/<(?:.|\n)*?>/gm, '')
     let scoreindex = 0
     let hostindex = 0
     let message = ' '
@@ -279,22 +295,22 @@ io.on('connection', socket => {
             gameRoomList[i].scorelist.push(temppackage)
             hostindex = gameRoomList[i].scorelist.length - 1
           }
-        message = username + "( " + gameRoomList[i].scorelist[scoreindex].score + " ): " + data.message;
-        io.to(focus).emit('chat message', {msg : message, servermessage : false} )
-      
+          message = username + "( " + gameRoomList[i].scorelist[scoreindex].score + " ): " + data.message;
+          io.to(focus).emit('chat message', { msg: message, servermessage: false })
+
           if (chatMessage.toLowerCase().includes(gameRoomList[i].word) && gameRoomList[i].host != data.playerid) {
             gameRoomList[i].scorelist[scoreindex].score++
             gameRoomList[i].scorelist[hostindex].score++
-          message = username + "( " + gameRoomList[i].scorelist[scoreindex].score + " ) guessed the word: " + gameRoomList[i].word
-          io.to(focus).emit('chat message',  {msg : message, servermessage : true})
+            message = username + "( " + gameRoomList[i].scorelist[scoreindex].score + " ) guessed the word: " + gameRoomList[i].word
+            io.to(focus).emit('chat message', { msg: message, servermessage: true })
             getWord(focus)
           }
           break
         }
       }
     } else {
-          message =  username + ": " + data.message
-    io.to(focus).emit('chat message',{msg : message, servermessage : false})
+      message = username + ": " + data.message
+      io.to(focus).emit('chat message', { msg: message, servermessage: false })
     }
   })
 
@@ -304,6 +320,7 @@ io.on('connection', socket => {
       gameroomid: roomid,
       gameroomname: roomname,
       playerlist: [],
+      hostlist: [],
       scorelist: [{ player: "", score: 0 }],
       host: null,
       hostUsername: null,
@@ -311,7 +328,7 @@ io.on('connection', socket => {
     }
     gameRoomList.push(package);
 
-    io.to(LOBBY).emit('newgame',{ package : package, limit : LIMIT, playercount : 1});
+    io.to(LOBBY).emit('newgame', { package: package, limit: LIMIT, playercount: 1 });
     io.to(playerid).emit('enterRoom', roomid);
   });
 
