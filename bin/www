@@ -13,11 +13,11 @@ let options = {
 }
 let pgp = require('pg-promise')(options);
 let connectionString = {
-    host: 'localhost',
+    host: 'ec2-54-243-203-179.compute-1.amazonaws.com',
     port: 5432,
-    database: 'Brian',
-    user: 'postgres',
-    password: '5ujuxoqu'
+    database: 'd799nec8c73qgg',
+    user: 'mgouwotknrlftl',
+    password: 'G1P9XIfPEFHpuDy15LGfooJ7FU'
     //postgres://Brian:@localhost:5432/Brian'
 };
 let db = pgp(connectionString);
