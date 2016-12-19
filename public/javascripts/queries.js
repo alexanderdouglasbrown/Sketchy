@@ -1,12 +1,12 @@
-var promise = require('bluebird');
+let promise = require('bluebird');
 
-var options = {
+let options = {
     promiseLib: promise
 };
 
-var pgp = require('pg-promise')(options);
-var connectionString = 'postgres://localhost:5432/Brian';
-var db = pgp(connectionString);
+let pgp = require('pg-promise')(options);
+let connectionString = process.env.DATABASE_URL//'postgres://localhost:5432/Brian';
+let db = pgp(connectionString);
 
 module.exports = {
     getWord: getWord
@@ -15,11 +15,7 @@ module.exports = {
 function getWord(req, res, next) {
     db.one('SELECT word from wordlist ORDER BY random() LIMIT 1')
         .then(function (data) {
-        res.status(200)
-            .json({
-                status: 'success',
-                data: data,
-                message: 'Word Retrieved'
+            console.log(data);    // print word to console to test
             });
     })
     .catch(function (err) {
