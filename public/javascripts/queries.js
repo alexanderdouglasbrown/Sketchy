@@ -15,11 +15,7 @@ module.exports = {
 function getWord(req, res, next) {
     db.one('SELECT word from wordlist ORDER BY random() LIMIT 1')
         .then(function (data) {
-        res.status(200)
-            .json({
-                status: 'success',
-                data: data,
-                message: 'Word Retrieved'
+            console.log(data);    // print word to console to test
             });
     })
     .catch(function (err) {

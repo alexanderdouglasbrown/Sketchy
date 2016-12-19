@@ -7,6 +7,21 @@
 var app = require('../app');
 var debug = require('debug')('sketchy:server');
 var http = require('http');
+let promise = require('bluebird');
+let options = {
+    promiseLib: promise
+}
+let pgp = require('pg-promise')(options);
+let connectionString = {
+    host: 'localhost',
+    port: 5432,
+    database: 'Brian',
+    user: 'postgres',
+    password: '5ujuxoqu'
+    //postgres://Brian:@localhost:5432/Brian'
+};
+let db = pgp(connectionString);
+
 
 /**
  * Get port from environment and store in Express.
@@ -183,19 +198,22 @@ io.on('connection', socket => {
     findNewHost(data)
   })
 
-  socket.on('getWord', roomid => {
-    getWord(roomid)
-  })
+    socket.on('getWord', roomid => {
+        getWord(roomid)
+    })
 
-  function getWord(roomid) {
-    for (let i = 0; i < gameRoomList.length; i++) {
-      if (gameRoomList[i].gameroomid == roomid) {
-        gameRoomList[i].word = wordlist[getRandomInt(0, wordlist.length)]
-        io.to(gameRoomList[i].host).emit('setWord', gameRoomList[i].word)
-        return
-      }
+    function getWord(roomid) {
+        db.one('SELECT word FROM csc667.wordlist ORDER BY random() LIMIT 1')
+            .then(function (data) {
+                for (let i = 0; i < gameRoomList.length; i++) {
+                    if (gameRoomList[i].gameroomid == roomid) {
+                        gameRoomList[i].word = data.word
+                        io.to(gameRoomList[i].host).emit('setWord', gameRoomList[i].word)
+                        return
+                    }
+                }
+            })
     }
-  }
 
   function findNewHost(data) {
     temp_playerlist = []
@@ -337,7 +355,13 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min
 }
 
-//Temp list
+
+
+        //.catch(function (err) {
+        //    return next(err);
+        //}
+
+/*Temp list
 wordlist = ["cat", "sun", "cup", "ghost", "flower", "pie", "cow",
   "banana", "snowflake", "bug", "book", "jar", "snake", "light", "tree", "lips", "apple",
   "slide", "socks", "smile", "swing", "coat", "shoe", "water", "heart", "hat", "ocean",
@@ -364,3 +388,4 @@ wordlist = ["cat", "sun", "cup", "ghost", "flower", "pie", "cow",
   "tv", "quilt", "chalk", "dollar", "soda", "chin", "swing", "garden", "ticket", "boot",
   "cello", "rain", "clam", "pelican", "stingray", "fur", "blowfish", "rainbow", "happy", "fairy"
 ]
+    */
