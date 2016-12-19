@@ -55,4 +55,10 @@ block content
       const playerid = "#{id}" 
       window.onload = () => {
         socket.emit('loadLobby', {username : "#{username}", id : "#{id}"});
+        if(player === ''){
+          $('#loginbutton').html('<a class = "" href = "/auth" > <img src= "/images/googlelogin.png"> </a>')
+        }
+        else {
+          $('#loginbutton').html('<a class = "btn btn-default" href = "/logout" role = "button" > Log out  </a>')
+        }
       }
