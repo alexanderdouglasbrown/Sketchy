@@ -173,7 +173,9 @@ function fadeout() {
         artpad.tempLocked = false
         artpad.fadeCounter = 60
         clearInterval(artpad.fadeInterval)
-        clearButton()
+        if (!artpad.readOnly) {
+            clearButton()
+        }
     }
 }
 
