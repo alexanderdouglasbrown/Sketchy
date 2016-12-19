@@ -13,12 +13,6 @@ let options = {
 }
 let pgp = require('pg-promise')(options);
 let connectionString = process.env.DATABASE_URL
-    /*host: 'ec2-54-243-203-179.compute-1.amazonaws.com',
-    port: process.env.PORT,
-    database: 'd799nec8c73qgg',
-    user: 'mgouwotknrlftl',
-    password: 'G1P9XIfPEFHpuDy15LGfooJ7FU'*/
-    //postgres://Brian:@localhost:5432/Brian'
 
 let db = pgp(connectionString);
 
@@ -115,21 +109,21 @@ function onListening() {
 
 io.on('connection', socket => {
   //before session 
-  let playerid = ''
-  let focus = '';
-  let inGame = false;
+  socket.playerid = ''
+  socket.focus = '';
+  socket.inGame = false;
   console.log('client connected id : ' + socket.id);
 
 
   socket.on('loadLobby', data => {
     console.log(data.username)
-    playerid = data.id
-    focus = LOBBY;
+    socket.playerid = data.id
+    socket.focus = LOBBY;
     socket.join(LOBBY);
-    socket.join(playerid);
+    socket.join(socket.playerid);
     for (let i = 0; i < gameRoomList.length; i++) {
       console.log(gameRoomList[i].gameroomname);
-      io.to(playerid).emit('newgame', { package: gameRoomList[i], limit: LIMIT, playercount: gameRoomList[i].playerlist.length });
+      io.to(socket.playerid).emit('newgame', { package: gameRoomList[i], limit: LIMIT, playercount: gameRoomList[i].playerlist.length });
       if (gameRoomList[i].playerlist.length >= LIMIT) {
         io.to(LOBBY).emit("disableRoom", gameRoomList[i].gameroomid)
       }
@@ -138,28 +132,28 @@ io.on('connection', socket => {
   });
 
   socket.on('loadGame', data => {
-    focus = data.roomid;
-    playerid = data.id
-    inGame = true;
+    socket.focus = data.roomid;
+    socket.playerid = data.id
+    socket.inGame = true;
     console.log(data.id);
     socket.join(data.roomid);
-    socket.join(playerid);
-    socket.broadcast.to(focus).emit('resync')
+    socket.join(socket.playerid);
+    socket.broadcast.to(socket.focus).emit('resync')
     for (let i = 0; i < gameRoomList.length; i++) {
       if (gameRoomList[i].gameroomid == data.roomid) {
-        gameRoomList[i].playerlist.push(playerid)
-        gameRoomList[i].hostlist.push(playerid)
+        gameRoomList[i].playerlist.push(socket.playerid)
+        gameRoomList[i].hostlist.push(socket.playerid)
         io.to(LOBBY).emit('updateRoomList', { roomid: data.roomid, limit: LIMIT, playercount: gameRoomList[i].playerlist.length })
 
         if (gameRoomList[i].playerlist.length >= LIMIT) {
           console.log("disabling room ")
           io.to(LOBBY).emit("disableRoom", data.roomid)
         }
-        io.to(gameRoomList[i].host).emit('getStatus', playerid)
+        io.to(gameRoomList[i].host).emit('getStatus', socket.playerid)
         break
       }
     }
-    startGameWhenReady(focus)
+    startGameWhenReady(socket.focus)
   });
 
   socket.on('sendStatus', data => {
@@ -231,7 +225,7 @@ io.on('connection', socket => {
 
           if (topscoreindex != -1) {
             let message = "Current lead: <b>" + gameRoomList[i].scorelist[topscoreindex].player + "</b> at " + gameRoomList[i].scorelist[topscoreindex].score + " points!"
-            io.to(focus).emit('chat message', { msg: message, servermessage: true })
+            io.to(socket.focus).emit('chat message', { msg: message, servermessage: true })
           }
 
           for (let j = 0; j < gameRoomList[i].playerlist.length; j++)
@@ -248,32 +242,32 @@ io.on('connection', socket => {
   socket.on('disconnect', data => {
     console.log('client disconnected');
 
-    console.log("Player id disconnected: " + playerid);
-    console.log(focus);
-    if (inGame) {
+    console.log("Player id disconnected: " + socket.playerid);
+    console.log(socket.focus);
+    if (socket.inGame) {
       for (let i = 0; i < gameRoomList.length; i++) {
-        if (gameRoomList[i].gameroomid == focus) {
-          let index = gameRoomList[i].playerlist.indexOf(playerid)
-          let hostToDelete = gameRoomList[i].hostlist.indexOf(playerid)
+        if (gameRoomList[i].gameroomid == socket.focus) {
+          let index = gameRoomList[i].playerlist.indexOf(socket.playerid)
+          let hostToDelete = gameRoomList[i].hostlist.indexOf(socket.playerid)
           gameRoomList[i].playerlist.splice(index, 1)
           gameRoomList[i].hostlist.splice(hostToDelete, 1)
-          io.to(LOBBY).emit('updateRoomList', { roomid: focus, limit: LIMIT, playercount: gameRoomList[i].playerlist.length })
+          io.to(LOBBY).emit('updateRoomList', { roomid: socket.focus, limit: LIMIT, playercount: gameRoomList[i].playerlist.length })
 
-          if (gameRoomList[i].host == playerid) {
+          if (gameRoomList[i].host == socket.playerid) {
             gameRoomList[i].host = null
-            startGameWhenReady(focus)
+            startGameWhenReady(socket.focus)
           }
 
           if (gameRoomList[i].playerlist.length < LIMIT && gameRoomList[i].playerlist.length >= 1) {
-            io.to(LOBBY).emit('enableRoom', focus)
+            io.to(LOBBY).emit('enableRoom', socket.focus)
           }
           if (gameRoomList[i].playerlist.length == 1) {
             gameRoomList[i].host = null
-            io.to(focus).emit('endgame')
+            io.to(socket.focus).emit('endgame')
           }
           if (gameRoomList[i].playerlist.length < 1) {
             gameRoomList.splice(i, 1);
-            io.to(LOBBY).emit('deleteRoom', focus)
+            io.to(LOBBY).emit('deleteRoom', socket.focus)
           }
           return
         }
@@ -291,9 +285,9 @@ io.on('connection', socket => {
     let hostindex = 0
     let message = ' '
 
-    if (inGame) {
+    if (socket.inGame) {
       for (let i = 0; i < gameRoomList.length; i++) {
-        if (gameRoomList[i].gameroomid == focus) {
+        if (gameRoomList[i].gameroomid == socket.focus) {
           for (let j = 0; j < gameRoomList[i].scorelist.length; j++) {
             if (gameRoomList[i].scorelist[j].player == username) {
               scoreindex = j
@@ -314,21 +308,21 @@ io.on('connection', socket => {
             hostindex = gameRoomList[i].scorelist.length - 1
           }
           message = "<b>" + username + "( " + gameRoomList[i].scorelist[scoreindex].score + " )</b>: " + data.message;
-          io.to(focus).emit('chat message', { msg: message, servermessage: false })
+          io.to(socket.focus).emit('chat message', { msg: message, servermessage: false })
 
           if (chatMessage.toLowerCase().includes(gameRoomList[i].word) && gameRoomList[i].host != data.playerid) {
             gameRoomList[i].scorelist[scoreindex].score++
             gameRoomList[i].scorelist[hostindex].score++
             message = "<b>" + username + "( " + gameRoomList[i].scorelist[scoreindex].score + " ) </b> guessed the word: <b><i>" + gameRoomList[i].word + "</i></b>"
-            io.to(focus).emit('chat message', { msg: message, servermessage: true })
-            getWord(focus)
+            io.to(socket.focus).emit('chat message', { msg: message, servermessage: true })
+            getWord(socket.focus)
           }
           break
         }
       }
     } else {
       message = "<b>" + username + "</b>" + ": " + data.message
-      io.to(focus).emit('chat message', { msg: message, servermessage: false })
+      io.to(socket.focus).emit('chat message', { msg: message, servermessage: false })
     }
   })
 
@@ -347,21 +341,21 @@ io.on('connection', socket => {
     gameRoomList.push(package);
 
     io.to(LOBBY).emit('newgame', { package: package, limit: LIMIT, playercount: 1 });
-    io.to(playerid).emit('enterRoom', roomid);
+    io.to(socket.playerid).emit('enterRoom', roomid);
   });
 
   socket.on('private-chat', room => {
-    focus = room;
-    console.log(playerid + ' is joinning room: ' + room);
+    socket.focus = room;
+    console.log(socket.playerid + ' is joinning room: ' + room);
   });
 
   socket.on('returnToLobby', event => {
-    focus = LOBBY;
-    console.log(playerid + ' has returned to lobby ');
+    socket.focus = LOBBY;
+    console.log(socket.playerid + ' has returned to lobby ');
   });
   //artpad socket.io functions
   socket.on('mirror-payload', (msg) => {
-    socket.broadcast.to(focus).emit('mirror-package', msg)
+    socket.broadcast.to(socket.focus).emit('mirror-package', msg)
   });
 });
 
@@ -371,38 +365,3 @@ function getRandomInt(min, max) {
   max = Math.floor(max)
   return Math.floor(Math.random() * (max - min)) + min
 }
-
-
-
-        //.catch(function (err) {
-        //    return next(err);
-        //}
-
-/*Temp list
-wordlist = ["cat", "sun", "cup", "ghost", "flower", "pie", "cow",
-  "banana", "snowflake", "bug", "book", "jar", "snake", "light", "tree", "lips", "apple",
-  "slide", "socks", "smile", "swing", "coat", "shoe", "water", "heart", "hat", "ocean",
-  "kite", "dog", "mouth", "milk", "duck", "eyes", "skateboard", "bird", "boy", "apple",
-  "person", "girl", "mouse", "ball", "house", "star", "nose", "bed", "whale", "jacket",
-  "shirt", "hippo", "beach", "egg", "face", "cookie", "cheese", "drum", "circle", "spoon",
-  "worm", "bridge", "bone", "grapes", "bell", "jellyfish", "bunny", "truck", "grass",
-  "door", "monkey", "spider", "bread", "ears", "bowl", "bracelet", "alligator", "bat",
-  "clock", "lollipop", "moon", "doll", "orange", "ear", "basketball", "bike", "airplane",
-  "pen", "inchworm", "seashell", "rocket", "cloud", "bear", "corn", "chicken", "purse",
-  "glasses", "blocks", "carrot", "turtle", "pencil", "horse", "dinosaur", "head", "lamp",
-  "snowman", "ant", "giraffe", "cupcake", "chair", "leaf", "snail", "baby", "balloon", "bus",
-  "cherry", "crab", "football", "branch", "robot", "horse", "door", "song", "trip", "backbone",
-  "bomb", "round", "treasure", "garbage", "park", "pirate", "ski", "state", "whistle", "palace",
-  "baseball", "coal", "queen", "dominoes", "photograph", "computer", "hockey", "aircraft",
-  "hotdog", "key", "whisk", "frog", "lawnmower", "mattress", "pinwheel", "cake", "circus",
-  "battery", "mailman", "cowboy", "password", "bicycle", "skate", "electricity", "lightsaber",
-  "thief", "teapot", "deep", "spring", "nature", "shallow", "toast", "outside", "America",
-  "bowtie", "half", "spare", "wax", "platypus", "music", "sailboat", "popsicle", "brain",
-  "skirt", "knee", "pineapple", "tusk", "sprinkler", "money", "spool", "lighthouse",
-  "doormat", "face", "flute", "rug", "snowball", "purse", "owl", "gate", "suitcase",
-  "stomach", "doghouse", "pajamas", "peach", "newspaper", "hook", "school", "beaver",
-  "beehive", "beach", "artist", "flagpole", "camera", "mushroom", "toe", "pretzel",
-  "tv", "quilt", "chalk", "dollar", "soda", "chin", "swing", "garden", "ticket", "boot",
-  "cello", "rain", "clam", "pelican", "stingray", "fur", "blowfish", "rainbow", "happy", "fairy"
-]
-    */
