@@ -12,14 +12,14 @@ let options = {
     promiseLib: promise
 }
 let pgp = require('pg-promise')(options);
-let connectionString = {
-    host: 'ec2-54-243-203-179.compute-1.amazonaws.com',
-    port: 5432,
+let connectionString = process.env.DATABASE_URL
+    /*host: 'ec2-54-243-203-179.compute-1.amazonaws.com',
+    port: process.env.PORT,
     database: 'd799nec8c73qgg',
     user: 'mgouwotknrlftl',
-    password: 'G1P9XIfPEFHpuDy15LGfooJ7FU'
+    password: 'G1P9XIfPEFHpuDy15LGfooJ7FU'*/
     //postgres://Brian:@localhost:5432/Brian'
-};
+
 let db = pgp(connectionString);
 
 
