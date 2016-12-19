@@ -125,9 +125,8 @@ io.on('connection', socket => {
       console.log(gameRoomList[i].gameroomname);
       io.to(socket.playerid).emit('newgame', { package: gameRoomList[i], limit: LIMIT, playercount: gameRoomList[i].playerlist.length });
       if (gameRoomList[i].playerlist.length >= LIMIT) {
-        io.to(LOBBY).emit("disableRoom", gameRoomList[i].gameroomid)
+        io.to(playerid).emit("disableRoom", gameRoomList[i].gameroomid)
       }
-      return
     };
   });
 
