@@ -21,7 +21,7 @@ app.set('port', port);
 
 //some temporary chat variables
 const LOBBY = 'lobby-chat';
-const LIMIT = 10;
+const LIMIT = 8;
 const PLAYERLIST = 'player-list';
 
 
