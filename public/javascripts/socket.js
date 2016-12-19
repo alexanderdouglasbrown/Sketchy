@@ -42,7 +42,7 @@ $(document).ready(function () {
   });
 
   socket.on('deleteRoom', id => {
-    $('#' + id).remove();
+    $('#' + id).parent().remove();
 
   });
 
