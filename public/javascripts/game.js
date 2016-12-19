@@ -98,5 +98,6 @@ function resetThings() {
 
 $('#skip').click(() => {
     game.timeRemaining -= 10
+    socket.emit('skip', roomid)
     setWord()
 })
