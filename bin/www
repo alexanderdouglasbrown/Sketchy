@@ -241,7 +241,7 @@ io.on('connection', socket => {
   socket.on('skip', from => {
     for (let i = 0; i < gameRoomList.length; i++) {
       if (gameRoomList[i].gameroomid == from) {
-        let message = "Host <b>" + gameRoomList[i].hostUsername + "</b> skipped the word: <i><b>" + gameRoomList[i].word + "</b></i>. There will be a 10 second penalty."
+        let message = "Host <b>" + gameRoomList[i].hostUsername + "</b> skipped the word <i><b>" + gameRoomList[i].word + "</b></i>. There will be a 10 second penalty."
         io.to(from).emit('chat message', { msg: message, servermessage: true })
         io.to(from).emit('artpad victory')
       }
