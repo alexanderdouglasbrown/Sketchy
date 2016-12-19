@@ -46,7 +46,7 @@ $(document).ready(function () {
 
   });
 
-  $('#rooms').click(event => {
+  $('#roomsList').click(event => {
     //console.log(event.target.id);
     if (event.target.id != "rooms" && event.target.id != "") {
       if (player === '') {
