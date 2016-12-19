@@ -14,7 +14,7 @@ const artpad = {
     clearWasPressed: false,
     readOnly: true,
     tempLocked: false,
-    fadeCounter: 50,
+    fadeCounter: 60,
     fadeInterval: null
 }
 
@@ -171,7 +171,7 @@ function fadeout() {
     if (artpad.fadeCounter <= 0) {
         artpad.context.globalAlpha = 1
         artpad.tempLocked = false
-        artpad.fadeCounter = 50
+        artpad.fadeCounter = 60
         clearInterval(artpad.fadeInterval)
         clearButton()
     }
