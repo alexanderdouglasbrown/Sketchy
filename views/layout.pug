@@ -22,12 +22,12 @@ html
       div.container
         div.navbar-header
           .row
-            .col-lg-6#logo
+            .col-md-6#logo
               a(href="/")
                 img(src="/images/logo.png")
-            .col-lg-6
+            .col-md-6
               .row#menu.pull-right
-                  .col-lg-6.col-sm-6
+                  .col-xs-6
                     button#instructionsButton.btn.btn-default( type='button', data-toggle='modal', data-target='popup') How to Play
                     .modal.fade(tabindex='-1', role='dialog', arai-labelledby='popupLabel', aria-hidden='true')#instructionsPopup
                       .modal-dialog(role='document')
@@ -45,6 +45,6 @@ html
                             h3 Sketchy is a class project by Paul Broestl, Alex Brown, Brian Mays, and Elaine Phuong
                           .modal-footer
                             button#modalClose.btn.btn-secondary(type='button', data-dismiss='modal') Close
-                  .col-lg-6.col-sm-6
+                  .col-xs-6
                     #loginbutton
   block content
