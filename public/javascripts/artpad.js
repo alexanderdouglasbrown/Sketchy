@@ -14,7 +14,7 @@ const artpad = {
     clearWasPressed: false,
     readOnly: true,
     tempLocked: false,
-    fadeCounter: 60,
+    fadeCounter: 50,
     fadeInterval: null
 }
 
@@ -157,10 +157,12 @@ socket.on('resync', () => {
 })
 
 socket.on('artpad victory', () => {
-    cancelMouseHold()
-    artpad.tempLocked = true
-    artpad.context.globalAlpha = 0.15
-    artpad.fadeInterval = setInterval(fadeout, 16)
+    if (!artpad.tempLocked) {
+        cancelMouseHold()
+        artpad.tempLocked = true
+        artpad.context.globalAlpha = 0.15
+        artpad.fadeInterval = setInterval(fadeout, 16)
+    }
 })
 
 function fadeout() {
@@ -169,7 +171,7 @@ function fadeout() {
     if (artpad.fadeCounter <= 0) {
         artpad.context.globalAlpha = 1
         artpad.tempLocked = false
-        artpad.fadeCounter = 60
+        artpad.fadeCounter = 50
         clearInterval(artpad.fadeInterval)
         clearButton()
     }

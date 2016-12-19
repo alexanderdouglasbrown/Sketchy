@@ -9,7 +9,7 @@ var debug = require('debug')('sketchy:server');
 var http = require('http');
 let promise = require('bluebird');
 let options = {
-    promiseLib: promise
+  promiseLib: promise
 }
 let pgp = require('pg-promise')(options);
 let connectionString = process.env.DATABASE_URL
@@ -192,22 +192,22 @@ io.on('connection', socket => {
     findNewHost(data)
   })
 
-    socket.on('getWord', roomid => {
-        getWord(roomid)
-    })
+  socket.on('getWord', roomid => {
+    getWord(roomid)
+  })
 
-    function getWord(roomid) {
-        db.one('SELECT word FROM public.wordlist ORDER BY random() LIMIT 1')
-            .then(function (data) {
-                for (let i = 0; i < gameRoomList.length; i++) {
-                    if (gameRoomList[i].gameroomid == roomid) {
-                        gameRoomList[i].word = data.word.toLowerCase()
-                        io.to(gameRoomList[i].host).emit('setWord', gameRoomList[i].word)
-                        return
-                    }
-                }
-            })
-    }
+  function getWord(roomid) {
+    db.one('SELECT word FROM public.wordlist ORDER BY random() LIMIT 1')
+      .then(function (data) {
+        for (let i = 0; i < gameRoomList.length; i++) {
+          if (gameRoomList[i].gameroomid == roomid) {
+            gameRoomList[i].word = data.word.toLowerCase()
+            io.to(gameRoomList[i].host).emit('setWord', gameRoomList[i].word)
+            return
+          }
+        }
+      })
+  }
 
   function findNewHost(data) {
     for (let i = 0; i < gameRoomList.length; i++) {
@@ -237,6 +237,16 @@ io.on('connection', socket => {
       }
     }
   }
+
+  socket.on('skip', from => {
+    for (let i = 0; i < gameRoomList.length; i++) {
+      if (gameRoomList[i].gameroomid == from) {
+        let message = "Host <b>" + gameRoomList[i].hostUsername + "</b> skipped the word: <i><b>" + gameRoomList[i].word + "</b></i>. There will be a 10 second penalty."
+        io.to(from).emit('chat message', { msg: message, servermessage: true })
+        io.to(from).emit('artpad victory')
+      }
+    }
+  })
 
   socket.on('disconnect', data => {
     console.log('client disconnected');
