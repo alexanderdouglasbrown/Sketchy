@@ -28,9 +28,21 @@ html
             .col-lg-6
               .row#menu.pull-right
                   .col-lg-4.col-sm-4
-                    a.btn.btn-default(href='/' , role='button') Return to Lobby
+                    button#instructionsButton.btn.btn-default( type='button', data-toggle='modal', data-target='popup') How to Play
+                    .modal.fade(tabindex='-1', role='dialog', arai-labelledby='popupLabel', aria-hidden='true')#instructionsPopup
+                      .modal-dialog(role='document')
+                        .modal-content
+                          .modal-header
+                            h2 How to play Sketchy&trade;
+                          .modal-body
+                            h4 In the main lobby enter an existing room or create a new room.
+                            h4 When a player creates a new room, they will automatically enter the room. The player will wait until another player enters the room. Once two players are in the room the game will start.
+                            h3 Playing Sketchy&trade;
+                            h4 Each game will have unlimited rounds until all players leave the room. In each round, a random player (the host) will be selected from the room to to draw visual representations of words. The rest of the players will guess what the host is drawing by typing in chat. If a player guesses the word correctly, the host and the player is awarded a point and the next word will be displayed. To exit, just close the page. The room will close after all players have left the room.
+                          .modal-footer
+                            button#modalClose.btn.btn-secondary(type='button', data-dismiss='modal') Close
                   .col-lg-4.col-sm-4
                     a.btn.btn-default( href='/auth', role='button') Sign in with Google!
                   .col-lg-4.col-sm-4
-                    a.btn.btn-default( href='/logout', role='button') Sign out 
-    block content
+                    a.btn.btn-default( href='/logout', role='button') Sign out   
+  block content

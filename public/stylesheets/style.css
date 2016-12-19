@@ -13,12 +13,20 @@ a {
 navbar{
   margin-bottom:-30px;
 }
+
+#timer {
+  font-size : 30px;
+}
+
 #topBar {
   margin-left : 5%;
+  text-align : center;
   color: white ;
   background-color: rgba(0,0,0,0.5);
   font-weight: bold;
   width: 90%;
+  height: 10%;
+  padding: 5px;
   border-radius : 10px;
 }
 
@@ -38,7 +46,7 @@ navbar{
 
   
 }
-#menu a {
+#menu a, #menu button:not(#modalClose) {
   min-height : 40px;
   min-width : 100%;
   font-size : 16px;
@@ -65,9 +73,6 @@ navbar{
   margin-bottom: -5px;
 }
 
-/*#timer{
-  color: blue;
-}*/
 
 #status span{
   color: red;
@@ -93,6 +98,7 @@ navbar{
 
 #rooms ul li a{
   cursor: pointer;
+  
 }
 
 #chat .list-group, #rooms .list-group{
@@ -104,7 +110,8 @@ navbar{
   overflow: scroll;
   max-height:100%;
   overflow-x:hidden;
-  border-radius: 10px
+  border-radius: 10px;
+  z-index : 0;
 }
   
 #chat .list-group-item{
@@ -119,15 +126,17 @@ navbar{
   list-style-type: none;
   margin : 5px;
   border: none;
-  border-top-left-radius: 5px;
-  border-bottom-left-radius: 5px;
-  border-top-right-radius: 5px;
-  border-bottom-left-radius: 5px;
+  border-radius : 10px;
   min-height : 80px;
-  font-size : 36px;
+  font-size : 19px;
   padding-left:10px;
+  padding-right: 2px;
   padding-top: 2px;
   padding-bottom: 2px;
+}
+
+#rooms .playercount {
+  font-size : 30px ;
 }
 
 #chat form{
