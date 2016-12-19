@@ -5,7 +5,7 @@ let options = {
 };
 
 let pgp = require('pg-promise')(options);
-let connectionString = 'postgres://localhost:5432/Brian';
+let connectionString = process.env.DATABASE_URL//'postgres://localhost:5432/Brian';
 let db = pgp(connectionString);
 
 module.exports = {
