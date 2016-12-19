@@ -204,7 +204,7 @@ io.on('connection', socket => {
     })
 
     function getWord(roomid) {
-        db.one('SELECT word FROM csc667.wordlist ORDER BY random() LIMIT 1')
+        db.one('SELECT word FROM public.wordlist ORDER BY random() LIMIT 1')
             .then(function (data) {
                 for (let i = 0; i < gameRoomList.length; i++) {
                     if (gameRoomList[i].gameroomid == roomid) {
