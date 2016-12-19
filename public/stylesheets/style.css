@@ -45,20 +45,24 @@ navbar{
   border-radius : 10px;
   display: flex;
   margin-left: 50px;
-
-  
 }
 
 #menu a, #menu button:not(#modalClose) {
   min-height : 40px;
   min-width : 95%;
   font-size : 16px;
-  margin-right : 5px; 
+  margin-right : 5px;
+  margin-bottom: 20px;
 }
+
 #menu a img {
   max-height :45px ;
   border: 0;
   margin-left : 5%;
+}
+
+#loginbutton img{
+  margin-top: -2px;
 }
 
 #statusBar, #topBar{
