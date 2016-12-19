@@ -15,8 +15,9 @@ block content
           const player = '#{player}'
       #topBar
         .row#statusBar
-          .col-lg-8#status Waiting on other players...
-          .col-lg-3#timer
+          #status 
+            p Waiting on other players...
+          #timer
       canvas#artpadCanvas
       br
       #toolbar
@@ -43,6 +44,12 @@ block content
     const username = "#{username}"
     window.onload = () => {
       socket.emit('loadGame', {roomid : roomid, id : "#{id}"});
+      if(player === ''){
+        $('#loginbutton').html('<a class = "btn btn-default" href = "/auth" role = "button" > Sign in with Google! </a>')
+      }
+     else {
+        $('#loginbutton').html('<a class = "btn btn-default" href = "/logout" role = "button" > Log out  </a>')
+      }
     }
   script(src="/javascripts/artpad.js")
   script(src='/javascripts/game.js')
