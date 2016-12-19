@@ -24,7 +24,7 @@ $(document).ready(function () {
   socket.on('chat message', data => {
 
     if ( data.servermessage) {
-      $('.messages').append('<li class = "message list-group-item" id  = "servermessage"> ' + data.msg + '</li>');
+      $('.messages').append('<li class = "message list-group-item servermessage"> ' + data.msg + '</li>');
     } else {
       $('.messages').append('<li class = "message list-group-item"> ' + data.msg + '</li>');
     }

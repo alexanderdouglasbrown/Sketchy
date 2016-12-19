@@ -103,7 +103,6 @@ navbar{
 
 #chat .list-group, #rooms .list-group{
   background-color: rgba(0,0,0,0.5);
-  font-weight: bold;
   padding-bottom: 5px;
   height: 65vh;
   min-height: 550px;
@@ -155,6 +154,11 @@ textarea{
 /*#chat li:nth-child(odd) {
   background: #eee;
 }*/
+
+#chat .servermessage{
+  background: midnightblue;
+  color: white;
+}
 
 #toolbar{
   margin-left: 30px;

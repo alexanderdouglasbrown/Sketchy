@@ -97,5 +97,6 @@ function resetThings() {
 }
 
 $('#skip').click(() => {
+    game.timeRemaining -= 10
     setWord()
 })

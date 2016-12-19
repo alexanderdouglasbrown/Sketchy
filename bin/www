@@ -212,7 +212,7 @@ io.on('connection', socket => {
           }
 
           if (topscoreindex != -1) {
-            let message = "Current lead: " + gameRoomList[i].scorelist[topscoreindex].player + " at " + gameRoomList[i].scorelist[topscoreindex].score + " points!"
+            let message = "Current lead: <b>" + gameRoomList[i].scorelist[topscoreindex].player + "</b> at " + gameRoomList[i].scorelist[topscoreindex].score + " points!"
             io.to(focus).emit('chat message', { msg: message, servermessage: true })
           }
 
@@ -295,13 +295,13 @@ io.on('connection', socket => {
             gameRoomList[i].scorelist.push(temppackage)
             hostindex = gameRoomList[i].scorelist.length - 1
           }
-          message = username + "( " + gameRoomList[i].scorelist[scoreindex].score + " ): " + data.message;
+          message = "<b>" + username + "( " + gameRoomList[i].scorelist[scoreindex].score + " )</b>: " + data.message;
           io.to(focus).emit('chat message', { msg: message, servermessage: false })
 
           if (chatMessage.toLowerCase().includes(gameRoomList[i].word) && gameRoomList[i].host != data.playerid) {
             gameRoomList[i].scorelist[scoreindex].score++
             gameRoomList[i].scorelist[hostindex].score++
-            message = username + "( " + gameRoomList[i].scorelist[scoreindex].score + " ) guessed the word: " + gameRoomList[i].word
+            message = "<b>" + username + "( " + gameRoomList[i].scorelist[scoreindex].score + " ) </b> guessed the word: <b><i>" + gameRoomList[i].word + "</i></b>"
             io.to(focus).emit('chat message', { msg: message, servermessage: true })
             getWord(focus)
           }
@@ -309,7 +309,7 @@ io.on('connection', socket => {
         }
       }
     } else {
-      message = username + ": " + data.message
+      message = "<b>" + username + "</b>" + ": " + data.message
       io.to(focus).emit('chat message', { msg: message, servermessage: false })
     }
   })
